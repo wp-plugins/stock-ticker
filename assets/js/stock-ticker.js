@@ -16,7 +16,9 @@ function wpau_stock_ticker_setup(symbols,id,show) {
 		jQuery("ul#"+id).html("<li class='init'>Sorry, currently we can't get stock quotes.</li>").webTicker();
 	}});
 	jQuery.getJSON(yql, function(data) {
-		if ( data.query.results.quote != null ) {
+		// if ( data.query.results.quote != null ) {
+			console.log(data);
+		if ( data.query.results !== null ) {
 			var items = [];
 			jQuery.each(data.query.results.quote, function(key, val) {
 				var price = val.LastTradePriceOnly;
@@ -30,6 +32,8 @@ function wpau_stock_ticker_setup(symbols,id,show) {
 				items.push('<li class="'+chclass+'"><a href="http://finance.yahoo.com/q?s='+val.Symbol+'" target="_blank" title="'+val.Name+' (Vol: '+val.Volume+'; Ch: '+val.ChangeinPercent+')">'+company_show+' '+price+' '+change+'</a></li>');
 			});
 			jQuery("ul#"+id).html(items.join('')).webTicker();
+		} else {
+			jQuery("ul#"+id).html('<li class="minus">Unfortunately, we could not to get stock quotes this time.</li>').webTicker();
 		}
 
 	});

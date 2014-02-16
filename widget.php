@@ -21,13 +21,13 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		// outputs the content of the widget
-		$title = apply_filters( 'widget_title', $instance['title'] );
+		$title   = apply_filters( 'widget_title', $instance['title'] );
 		$symbols = $instance['symbols'];
-		$show = $instance['show'];
-
-		$zero = $instance['zero'];
-		$minus = $instance['minus'];
-		$plus = $instance['plus'];
+		$show    = $instance['show'];
+		
+		$zero    = $instance['zero'];
+		$minus   = $instance['minus'];
+		$plus    = $instance['plus'];
 
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
@@ -108,6 +108,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 		<input class="wpau-color-field" id="<?php echo $this->get_field_id( 'plus' ); ?>" name="<?php echo $this->get_field_name( 'plus' ); ?>" type="text" value="<?php echo esc_attr( $plus ); ?>" />
 		</p>
 <script type="text/javascript">
+//<![CDATA[
 jQuery(document).ready(function($){
 	$('#widgets-right .wpau-color-field').each(function(){
 		if ( $(this).parent().attr('class') != 'wp-picker-input-wrap' ) {
@@ -117,13 +118,14 @@ jQuery(document).ready(function($){
 });
 // now deal with fresh added widget
 jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
-    jQuery(this).find('div[id*="stock_ticker"]').each(function(){
-    	var ticker_id = jQuery(this).attr('id');
-    	if ( jQuery(ticker_id).find('.wpau-color-field').parent().attr('class') != 'wp-picker-input-wrap' ) {
-    		jQuery(ticker_id).find('.wpau-color-field').wpColorPicker();
-    	}
-    });
+	jQuery(this).find('div[id*="stock_ticker"]').each(function(){
+		var ticker_id = jQuery(this).attr('id');
+		if ( jQuery(ticker_id).find('.wpau-color-field').parent().attr('class') != 'wp-picker-input-wrap' ) {
+			jQuery(ticker_id).find('.wpau-color-field').wpColorPicker();
+		}
+	});
 });
+//]]>
 </script>
 		<?php 
 	}
@@ -137,12 +139,12 @@ jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
 	public function update( $new_instance, $old_instance ) {
 		// processes widget options to be saved
 		$instance = array();
-		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['title']   = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 		$instance['symbols'] = ( ! empty( $new_instance['symbols'] ) ) ? strip_tags( $new_instance['symbols'] ) : '';
-		$instance['show'] = ( ! empty( $new_instance['show'] ) ) ? strip_tags( $new_instance['show'] ) : '';
-		$instance['zero'] = ( ! empty( $new_instance['zero'] ) ) ? strip_tags( $new_instance['zero'] ) : '';
-		$instance['minus'] = ( ! empty( $new_instance['minus'] ) ) ? strip_tags( $new_instance['minus'] ) : '';
-		$instance['plus'] = ( ! empty( $new_instance['plus'] ) ) ? strip_tags( $new_instance['plus'] ) : '';
+		$instance['show']    = ( ! empty( $new_instance['show'] ) ) ? strip_tags( $new_instance['show'] ) : '';
+		$instance['zero']    = ( ! empty( $new_instance['zero'] ) ) ? strip_tags( $new_instance['zero'] ) : '';
+		$instance['minus']   = ( ! empty( $new_instance['minus'] ) ) ? strip_tags( $new_instance['minus'] ) : '';
+		$instance['plus']    = ( ! empty( $new_instance['plus'] ) ) ? strip_tags( $new_instance['plus'] ) : '';
 
 		return $instance;
 	}
@@ -150,14 +152,10 @@ jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
 }
 
 // register widget
-if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-	add_action( 'widgets_init', function(){
+function stock_ticker_init() {
+	if (version_compare(PHP_VERSION, '5.3.0') > 0)
 		register_widget( 'WPAU_Stock_Ticker_Widget' );
-	});
-} else {
-	add_action('widgets_init',
-		create_function('', 'return register_widget("WPAU_Stock_Ticker_Widget");')
-	);
+	else
+		create_function('', 'return register_widget("WPAU_Stock_Ticker_Widget");');
 }
-
-?>
+add_action( 'widgets_init', 'stock_ticker_init' );

@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker
 Description: Easy display ticker tape with stock prices information with data provided by Yahoo Finance.
-Version: 0.1.0
+Version: 0.1.1
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -67,11 +67,10 @@ if(!class_exists('WPAU_STOCK_TICKER'))
             {
                 $id = 'stock_ticker_'. substr(md5(mt_rand()),0,8);
                 $out = '<ul id="' .$id. '" class="stock_ticker"></ul>';
-                $out .= '<script type="text/javascript">';
+                $out .= '<script type="text'.'/javascript">';
                 $wpau_stock_ticker_css = "ul#{$id}.stock_ticker li.zero a, ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
                 $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.minus a, ul#{$id}.stock_ticker li.minus a:hover { color: $minus; }";
                 $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.plus a, ul#{$id}.stock_ticker li.plus a:hover { color: $plus; }";
-
                 $out .= 'jQuery("head").append(\'<style type="text/css">' .$wpau_stock_ticker_css. '</style>\');';
 
                 if ( wp_script_is( 'jquery', 'done' ) )
@@ -161,4 +160,3 @@ EOF;
         add_shortcode( 'stock_ticker', array('WPAU_STOCK_TICKER','stock_ticker_shortcode') );
     }
 }
-?>

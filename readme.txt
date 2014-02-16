@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, stock symbols, stock quotes
 Requires at least: 3.7.1
 Tested up to: 3.8.1
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -61,7 +61,16 @@ Easy install Stock Ticker as any other ordinary WordPress plugin
 Visit [Yahoo Finance Stock Center](http://finance.yahoo.com/stock-center/) and look for preferred symbols that you need/wish to display on your site.
 For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, IBM, Cisco, Google, Yahoo, Amazon)
 
+== TODO ==
+
+* Caching quotes
+
 == Changelog ==
+
+= 0.1.1 =
+* Add: stock parser message when fail fetching quotes
+* Fix: initializing widget syntax error: unexpected T_FUNCTION
+* Remove: closing PHP tags
 
 = 0.1.0 =
 * Initial public release
@@ -97,6 +106,9 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 * developed JavaScript code for parsing stock data
 
 == Upgrade Notice ==
+
+= 0.1.1 =
+Fixed error for websites that run on PHP <5.3.0
 
 = 0.1.0 =
 Initial public release
