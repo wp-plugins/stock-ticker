@@ -66,6 +66,10 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 * Caching quotes
 
 == Changelog ==
+= 0.1.1.1 =
+* Move: generated CSS and JS to footer
+* Remove: ajax setup from stock-ticker.js library
+* Optimize: minify stock-ticker.js library
 
 = 0.1.1 =
 * Add: stock parser message when fail fetching quotes

@@ -11,13 +11,7 @@ function wpau_stock_ticker_setup(symbols,id,show) {
 	yql += '&diagnostics=false';
 	yql += '&callback=?';
 
-	jQuery.ajaxSetup({
-		"error":function() {   
-		jQuery("ul#"+id).html("<li class='init'>Sorry, currently we can't get stock quotes.</li>").webTicker();
-	}});
 	jQuery.getJSON(yql, function(data) {
-		// if ( data.query.results.quote != null ) {
-			console.log(data);
 		if ( data.query.results !== null ) {
 			var items = [];
 			jQuery.each(data.query.results.quote, function(key, val) {

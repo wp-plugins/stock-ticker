@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker
 Description: Easy display ticker tape with stock prices information with data provided by Yahoo Finance.
-Version: 0.1.1
+Version: 0.1.1.1
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -67,16 +67,25 @@ if(!class_exists('WPAU_STOCK_TICKER'))
             {
                 $id = 'stock_ticker_'. substr(md5(mt_rand()),0,8);
                 $out = '<ul id="' .$id. '" class="stock_ticker"></ul>';
-                $out .= '<script type="text'.'/javascript">';
+
+                // prepare styles
                 $wpau_stock_ticker_css = "ul#{$id}.stock_ticker li.zero a, ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
                 $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.minus a, ul#{$id}.stock_ticker li.minus a:hover { color: $minus; }";
                 $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.plus a, ul#{$id}.stock_ticker li.plus a:hover { color: $plus; }";
-                $out .= 'jQuery("head").append(\'<style type="text/css">' .$wpau_stock_ticker_css. '</style>\');';
+                $_SESSION['wpau_stock_ticker_css'] = $wpau_stock_ticker_css;
 
-                if ( wp_script_is( 'jquery', 'done' ) )
-                    $out .= 'jQuery(document).ready(function(){wpau_stock_ticker_setup("' .$symbols. '","' .$id. '","' .$show. '");});';
+                // prepare jQuery
+                // $out .= '<script type="text'.'/javascript">';
+                // $wpau_stock_ticker_css = "ul#{$id}.stock_ticker li.zero a, ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
+                // $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.minus a, ul#{$id}.stock_ticker li.minus a:hover { color: $minus; }";
+                // $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.plus a, ul#{$id}.stock_ticker li.plus a:hover { color: $plus; }";
+                // $out .= 'jQuery("head").append(\'<style type="text/css">' .$wpau_stock_ticker_css. '</style>\');';
 
-                $out .= '</script>';
+                $_SESSION['wpau_stock_ticker_js'] = 'wpau_stock_ticker_setup("' .$symbols. '","' .$id. '","' .$show. '");';
+                // if ( wp_script_is( 'jquery', 'done' ) )
+                    // $out .= 'jQuery(document).ready(function(){wpau_stock_ticker_setup("' .$symbols. '","' .$id. '","' .$show. '");});';
+
+                // $out .= '</script>';
                 echo $out;
             }
         }
@@ -136,7 +145,7 @@ if(class_exists('WPAU_STOCK_TICKER'))
         function wpau_stock_ticker_js()
         {
             wp_enqueue_script( 'jquery-ticker', plugin_dir_url(__FILE__) . 'assets/js/jquery.webticker.min.js', array('jquery'), '1.0.0' );
-        	wp_enqueue_script( 'stock-ticker', plugin_dir_url(__FILE__) . 'assets/js/stock-ticker.js', array('jquery'), '1.0.0' );
+        	wp_enqueue_script( 'stock-ticker', plugin_dir_url(__FILE__) . 'assets/js/stock-ticker.min.js', array('jquery'), '1.0.0' );
             wp_enqueue_style( 'dashicons' );
             // dashicons (using and resource):
             // http://jameskoster.co.uk/work/using-wordpress-3-8s-dashicons-theme-plugin/
@@ -155,6 +164,13 @@ EOF;
             // wp_add_inline_style( 'stock-ticker', $wpau_stock_ticker_css );
         }
         add_action( 'wp_enqueue_scripts', 'wpau_stock_ticker_js' );
+
+        function wpau_stock_ticker_byshortcode()
+        {
+            echo "<script type=\"text/javascript\">jQuery(document).ready(function(){".$_SESSION['wpau_stock_ticker_js']."});</script>";
+            echo "<style type=\"text/css\">".$_SESSION['wpau_stock_ticker_css']."</style>";
+        }
+        add_action( 'wp_footer', 'wpau_stock_ticker_byshortcode' );
 
         // register stock_ticker shortcode
         add_shortcode( 'stock_ticker', array('WPAU_STOCK_TICKER','stock_ticker_shortcode') );
