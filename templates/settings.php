@@ -1,10 +1,11 @@
 <div class="wrap" id="stock_ticker_settings">
     <h2><?php _e( 'Stock Ticker Settings', 'wpaust' ); ?></h2>
     <form method="post" action="options.php"> 
-        <?php @settings_fields('wpau_stock_ticker-group'); ?>
-        <?php @do_settings_fields('wpau_stock_ticker-group'); ?>
+        <?php @settings_fields('default_settings'); ?>
+        <?php @settings_fields('advanced_settings'); ?>
+        <?php //@do_settings_fields('wpau_stock_ticker', 'default_settings'); ?>
 
-        <?php do_settings_sections('wpau_stock_ticker'); ?>
+        <?php @do_settings_sections('wpau_stock_ticker'); ?>
 
         <?php @submit_button(); ?>
     </form>

@@ -18,32 +18,34 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
          */
         public function admin_init()
         {
-        	// register your plugin's settings
-            register_setting('wpau_stock_ticker-group', 'st_symbols');
-            register_setting('wpau_stock_ticker-group', 'st_show');
-            register_setting('wpau_stock_ticker-group', 'st_quote_zero');
-            register_setting('wpau_stock_ticker-group', 'st_quote_minus');
-        	register_setting('wpau_stock_ticker-group', 'st_quote_plus');
+            // get default values
+            $defaults = WPAU_STOCK_TICKER::defaults();
 
-        	// add your settings section
-        	add_settings_section(
-        	    'wpau_stock_ticker-section', 
-        	    __('Default Settings','wpaust'), 
-        	    array(&$this, 'settings_section_wpau_stock_ticker'), 
-        	    'wpau_stock_ticker'
-        	);
+        	// register your plugin's settings
+            // TODO: validate and sanitize inputs for symbols, error_message and cache_timeout
+            register_setting('default_settings', "stock_ticker_defaults");
+            register_setting('advanced_settings', "stock_ticker_defaults");
+
+            // add general settings section
+            add_settings_section(
+                'default_settings', 
+                __('Default Settings','wpaust'), 
+                array(&$this, 'settings_default_section_description'), 
+                'wpau_stock_ticker'
+            );
         	
-            // add your setting's fields
+            // add setting's fields
             add_settings_field(
                 'wpau_stock_ticker-symbols', 
                 __('Stock Symbols','wpaust'), 
                 array(&$this, 'settings_field_input_text'), 
                 'wpau_stock_ticker', 
-                'wpau_stock_ticker-section',
+                'default_settings',
                 array(
-                    'field' => 'st_symbols',
+                    'field'       => "stock_ticker_defaults[symbols]",
                     'description' => __('Enter stock symbols separated with comma','wpaust'),
-                    'class' => 'widefat'
+                    'class'       => 'widefat',
+                    'value'       => $defaults['symbols'],
                 )
             );
             add_settings_field(
@@ -51,14 +53,15 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
                 __('Show Company as','wpaust'), 
                 array(&$this, 'settings_field_select'), 
                 'wpau_stock_ticker', 
-                'wpau_stock_ticker-section',
+                'default_settings',
                 array(
-                    'field' => 'st_show',
+                    'field'       => "stock_ticker_defaults[show]",
                     'description' => __('What to show as Company identifier by default','wpaust'),
-                    'items' => array(
-                        "name" => __("Company Name",'wpaust'),
+                    'items'       => array(
+                        "name"   => __("Company Name",'wpaust'),
                         "symbol" => __("Stock Symbol",'wpaust')
-                    )
+                    ),
+                    'value' => $defaults['show'],
                 )
             );
             // Color pickers
@@ -67,11 +70,11 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
                 __('Unchanged Quote','wpaust'), 
                 array(&$this, 'settings_field_colour_picker'), 
                 'wpau_stock_ticker', 
-                'wpau_stock_ticker-section',
+                'default_settings',
                 array(
-                    'field' => 'st_quote_zero',
+                    'field'       => "stock_ticker_defaults[zero]",
                     'description' => __('Set colour for unchanged quote','wpaust'),
-                    'value' => get_option('st_quote_zero','#454545')
+                    'value'       => $defaults['zero'],
                 )
             );
             add_settings_field( // minus
@@ -79,11 +82,11 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
                 __('Netagive Change','wpaust'), 
                 array(&$this, 'settings_field_colour_picker'), 
                 'wpau_stock_ticker', 
-                'wpau_stock_ticker-section',
+                'default_settings',
                 array(
-                    'field' => 'st_quote_minus',
+                    'field'       => "stock_ticker_defaults[minus]",
                     'description' => __('Set colour for negative change','wpaust'),
-                    'value' => get_option('st_quote_minus','#D8442F')
+                    'value'       => $defaults['minus'],
                 )
             );
             add_settings_field( // plus
@@ -91,21 +94,61 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
                 __('Positive Change','wpaust'), 
                 array(&$this, 'settings_field_colour_picker'), 
                 'wpau_stock_ticker', 
-                'wpau_stock_ticker-section',
+                'default_settings',
                 array(
-                    'field' => 'st_quote_plus',
+                    'field'       => "stock_ticker_defaults[plus]",
                     'description' => __('Set colour for positive change','wpaust'),
-                    'value' => get_option('st_quote_plus','#009D59')
+                    'value'       => $defaults['plus'],
                 )
             );
 
+            // add advanced settings section
+            add_settings_section(
+                'advanced_settings', 
+                __('Advanced Settings','wpaust'), 
+                array(&$this, 'settings_advanced_section_description'), 
+                'wpau_stock_ticker'
+            );
+            // caching timeout field
+            add_settings_field(
+                'wpau_stock_ticker-cache_timeout', 
+                __('Cache Timeout','wpaust'), 
+                array(&$this, 'settings_field_input_text'), 
+                'wpau_stock_ticker', 
+                'advanced_settings',
+                array(
+                    'field'       => "stock_ticker_defaults[cache_timeout]",
+                    'description' => __('Define cache timeout for single quote set, in seconds','wpaust'),
+                    'class'       => 'num',
+                    'value'       => $defaults['cache_timeout'],
+                )
+            );
+            // default error message
+            add_settings_field(
+                'wpau_stock_ticker-error_message', 
+                __('Error Message','wpaust'), 
+                array(&$this, 'settings_field_input_text'), 
+                'wpau_stock_ticker', 
+                'advanced_settings',
+                array(
+                    'field'       => "stock_ticker_defaults[error_message]",
+                    'description' => __('When Stock Ticker fail to grab quote set from Yahoo Finance, display this mesage in ticker','wpaust'),
+                    'class'       => 'widefat',
+                    'value'       => $defaults['error_message'],
+                )
+            );
             // Possibly do additional admin_init tasks
-        } // END public static function activate
+        } // END public static function admin_init()
         
-        public function settings_section_wpau_stock_ticker()
+        public function settings_default_section_description()
         {
             // Think of this as help text for the section.
             echo __('Predefine default settings for Stock Ticker. Here you can set stock symbols and how you wish to present companies in ticker.','wpaust');
+        }
+        public function settings_advanced_section_description()
+        {
+            // Think of this as help text for the section.
+            echo __('Set advanced options important for caching quote feeds.','wpaust');
         }
         
         /**
@@ -113,10 +156,11 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
          */
         public function settings_field_input_text($args)
         {
+            // TODO: optimize with extract()
             // Get the field name from the $args array
             $field = $args['field'];
             // Get the value of this setting
-            $value = get_option($field);
+            $value = $args['value']; //get_option($field);
             // Get description
             $description = $args['description'];
             // Get field class (widefat)
@@ -130,10 +174,11 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
          */
         public function settings_field_select($args)
         {
+            // TODO: optimize with extract()
             // Get the field name from the $args array
             $field = $args['field'];
             // Get the value of this setting
-            $value = get_option($field);
+            $value = $args['value']; //get_option($field);
             // Get description
             $description = $args['description'];
             // Get select items
@@ -182,7 +227,7 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
         	}
 	
         	// Render the settings template
-        	include(sprintf("%s/templates/settings.php", dirname(__FILE__)));
+        	include(sprintf("%s/../templates/settings.php", dirname(__FILE__)));
         } // END public function plugin_settings_page()
     } // END class WPAU_Stock_Ticker_Settings
 } // END if(!class_exists('WPAU_Stock_Ticker_Settings'))

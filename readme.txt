@@ -20,11 +20,14 @@ A simple and easy configurable plugin that allows you to insert stock ticker wit
 * Configure colours for unchanged quote, negative and positive changes
 * Both, global and widget settings provides easy colour picker for selecting all three colour values
 * Tooltip for ticker item display company name, stock volume and change percentage
-* Plugin uses jQuery to parse data from Yahoo Finance and render ticker content
+* Plugin uses native WordPress function to get and cache data from Yahoo Finance for predefined duration of time
 * No images, for stock indicators we uses WordPress dashicons
 * Ready to be translated to non-english languages
 
 For feature requests or help [send feedback](http://urosevic.net/wordpress/plugins/stock-ticker/ "Official plugin page") or use support forum on WordPress.
+
+= Known issues =
+Yahoo Finance does not provide quotes for `^DJI` nor `INDU` (Dow Jones Industrial Average) over YQL API calls, so we could not provide this symbol in Stock Ticker.
 
 = Shortcode =
 Use simple shortcode `[stock_ticker]` without any parameter in post or page, to display ticker with default (global) settings.
@@ -66,6 +69,13 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 * Caching quotes
 
 == Changelog ==
+= 0.1.2 =
+* Fix: missing argument on settings page for do_settings_fields()
+* Change: replace jQuery stock renderer with native WordPress/PHP functions
+* Optimize: move default settings to single wp_options entry
+* Add: settings: timeout to cache downloaded quotes
+* Add: settings: message to show when no quote can be downloaded
+
 = 0.1.1.1 =
 * Move: generated CSS and JS to footer
 * Remove: ajax setup from stock-ticker.js library
@@ -110,6 +120,9 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 * developed JavaScript code for parsing stock data
 
 == Upgrade Notice ==
+
+= 0.1.2 =
+Because we changed default options to single wp_options entry, after upgrade old defaults should be transformed to single entry.
 
 = 0.1.1 =
 Fixed error for websites that run on PHP <5.3.0

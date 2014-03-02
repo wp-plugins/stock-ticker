@@ -42,6 +42,10 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 	 * @param array $instance The widget options
 	 */
 	public function form( $instance ) {
+
+		// get defaults
+		$defaults = WPAU_STOCK_TICKER::defaults();
+
 		// outputs the options form on admin
 		if ( isset( $instance[ 'title' ] ) ) {
 			$title = $instance[ 'title' ];
@@ -53,29 +57,29 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 			$symbols = $instance[ 'symbols' ];
 		}
 		else {
-			$symbols = get_option('st_symbols','');
+			$symbols = $defaults['symbols'];
 		}
 		if ( isset( $instance[ 'show' ] ) ) {
 			$show = $instance[ 'show' ];
 		}
 		else {
-			$show = get_option('st_show','');
+			$show = $defaults['show'];
 		}
 
 		if ( isset( $instance[ 'zero' ] ) )
 			$zero = $instance[ 'zero' ];
 		else
-			$zero = get_option('st_quote_zero','#454545');
+			$zero = $defaults['zero']; 
 
 		if ( isset( $instance[ 'minus' ] ) )
 			$minus = $instance[ 'minus' ];
 		else
-			$minus = get_option('st_quote_minus','#D8442F');
+			$minus = $defaults['minus'];
 
 		if ( isset( $instance[ 'plus' ] ) )
 			$plus = $instance[ 'plus' ];
 		else
-			$plus = get_option('st_quote_plus','#009D59');
+			$plus = $defaults['plus'];
 
 		?>
 		<p>
