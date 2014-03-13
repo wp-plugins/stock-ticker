@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, stock symbols, stock quotes
 Requires at least: 3.7.1
 Tested up to: 3.8.1
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,6 +20,8 @@ A simple and easy configurable plugin that allows you to insert stock ticker wit
 * Configure colours for unchanged quote, negative and positive changes
 * Both, global and widget settings provides easy colour picker for selecting all three colour values
 * Tooltip for ticker item display company name, stock volume and change percentage
+* Define custom names for companies to be used instead shortened Yahoo Finance names
+* Strip null changes for currencies
 * Plugin uses native WordPress function to get and cache data from Yahoo Finance for predefined duration of time
 * No images, for stock indicators we uses WordPress dashicons
 * Ready to be translated to non-english languages
@@ -72,9 +74,11 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 = 0.1.2 =
 * Fix: missing argument on settings page for do_settings_fields()
 * Change: replace jQuery stock renderer with native WordPress/PHP functions
+* Change: strip null change, change percent and volume for currencies
 * Optimize: move default settings to single wp_options entry
 * Add: settings: timeout to cache downloaded quotes
 * Add: settings: message to show when no quote can be downloaded
+* Add: settings: field for custom company names and option to enable custom names
 
 = 0.1.1.1 =
 * Move: generated CSS and JS to footer
@@ -122,7 +126,7 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 == Upgrade Notice ==
 
 = 0.1.2 =
-Because we changed default options to single wp_options entry, after upgrade old defaults should be transformed to single entry.
+Because we changed default options to single wp_options entry, after upgrade old defaults should be transformed to single entry. You can set custom names on settings page.
 
 = 0.1.1 =
 Fixed error for websites that run on PHP <5.3.0

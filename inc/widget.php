@@ -29,11 +29,22 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 		$minus   = $instance['minus'];
 		$plus    = $instance['plus'];
 
-		echo $args['before_widget'];
+		// $custom  = $instance['custom'];
+
+		$out = $args['before_widget'];
+
 		if ( ! empty( $title ) )
-			echo $args['before_title'] . $title . $args['after_title'];
+			$out .= $args['before_title'] . $title . $args['after_title'];
+
+		ob_start();
 		WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus);
-		echo $args['after_widget'];
+		$out .= ob_get_contents();
+		ob_end_clean();
+
+		$out .= $args['after_widget'];
+
+		// output stock ticker widget
+		echo $out;
 	}
 
 	/**
@@ -111,6 +122,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 		<label for="<?php echo $this->get_field_id( 'plus' ); ?>"><?php _e( 'Positive Change','wpaust' ); ?>:</label><br />
 		<input class="wpau-color-field" id="<?php echo $this->get_field_id( 'plus' ); ?>" name="<?php echo $this->get_field_name( 'plus' ); ?>" type="text" value="<?php echo esc_attr( $plus ); ?>" />
 		</p>
+
 <script type="text/javascript">
 //<![CDATA[
 jQuery(document).ready(function($){

@@ -1,7 +1,7 @@
 <?php
-if(!class_exists('WPAU_Stock_Ticker_Settings'))
+if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 {
-	class WPAU_Stock_Ticker_Settings
+	class WPAU_STOCK_TICKER_SETTINGS
 	{
 		/**
 		 * Construct the plugin object
@@ -21,7 +21,7 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
             // get default values
             $defaults = WPAU_STOCK_TICKER::defaults();
 
-        	// register your plugin's settings
+            // register plugin's settings
             // TODO: validate and sanitize inputs for symbols, error_message and cache_timeout
             register_setting('default_settings', "stock_ticker_defaults");
             register_setting('advanced_settings', "stock_ticker_defaults");
@@ -109,6 +109,35 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
                 array(&$this, 'settings_advanced_section_description'), 
                 'wpau_stock_ticker'
             );
+            // add setting's fields
+            // custom name
+            add_settings_field(
+                'wpau_stock_ticker-legend', 
+                __('Custom Names','wpaust'), 
+                array(&$this, 'settings_field_textarea'), 
+                'wpau_stock_ticker', 
+                'advanced_settings',
+                array(
+                    'field'       => "stock_ticker_defaults[legend]",
+                    'class'       => 'widefat',
+                    'value'       => $defaults['legend'],
+                    'description' => __('Define custom names for symbols. Single symbol per row in format SYMBOL;CUSTOM_NAME','wpaust')
+                )
+            );
+            // enable custom name usage
+            add_settings_field(
+                'wpau_stock_ticker-custom', 
+                __('Use Custom Names','wpaust'), 
+                array(&$this, 'settings_field_checkbox'), 
+                'wpau_stock_ticker', 
+                'advanced_settings',
+                array(
+                    'field'       => "stock_ticker_defaults[custom]",
+                    'class'       => 'widefat',
+                    'value'       => $defaults['custom'],
+                    'description' => __('Use defined Custom Names instead default Yahoo Finance names','wpaust')
+                )
+            );
             // caching timeout field
             add_settings_field(
                 'wpau_stock_ticker-cache_timeout', 
@@ -156,34 +185,36 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
          */
         public function settings_field_input_text($args)
         {
-            // TODO: optimize with extract()
-            // Get the field name from the $args array
-            $field = $args['field'];
-            // Get the value of this setting
-            $value = $args['value']; //get_option($field);
-            // Get description
-            $description = $args['description'];
-            // Get field class (widefat)
-            $class = $args['class'];
-            // echo a proper input type="text"
+            extract( $args );
             echo sprintf('<input type="text" name="%s" id="%s" value="%s" class="%s" /><p class="description">%s</p>', $field, $field, $value, $class, $description);
         } // END public function settings_field_input_text($args)
+
+        /**
+         * This function provides checkbox for settings fields
+         */
+        public function settings_field_checkbox($args)
+        {
+            extract( $args );
+            $checked = ( !empty($args['value']) ) ? 'checked="checked"' : '';
+            echo sprintf('<label for="%s"><input type="checkbox" name="%s" id="%s" value="1" class="%s" %s />%s</label>', $field, $field, $field, $class, $checked, $description);
+        } // END public function settings_field_checkbox($args)
+
+        /**
+         * This function provides textarea for settings fields
+         */
+        public function settings_field_textarea($args)
+        {
+            extract( $args );
+            if (empty($rows)) $rows = 7;
+            echo sprintf('<textarea name="%s" id="%s" rows="%s" class="%s">%s</textarea><p class="description">%s</p>', $field, $field, $rows, $class, $value, $description);
+        } // END public function settings_field_textarea($args)
 
         /**
          * This function provides select for settings fields
          */
         public function settings_field_select($args)
         {
-            // TODO: optimize with extract()
-            // Get the field name from the $args array
-            $field = $args['field'];
-            // Get the value of this setting
-            $value = $args['value']; //get_option($field);
-            // Get description
-            $description = $args['description'];
-            // Get select items
-            $items = $args['items'];
-
+            extract( $args );
             $html = sprintf('<select id="%s" name="%s">',$field,$field);
             foreach ($items as $key=>$val)
             {
@@ -192,7 +223,7 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
             }
             $html .= sprintf('</select><p class="description">%s</p>',$description);
             echo $html;
-        } // END public function settings_field_input_text($args)
+        } // END public function settings_field_select($args)
 
         public function settings_field_colour_picker($args)
         {
@@ -200,7 +231,8 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
             $html = sprintf('<input type="text" name="%s" id="%s" value="%s" class="wpau-color-field" />',$field, $field, $value);
             $html .= (!empty($description)) ? ' <p class="description">'.$description.'</p>' : '';
             echo $html;
-        }
+        } // END public function settings_field_colour_picker($args)
+
         /**
          * add a menu
          */		
@@ -229,5 +261,5 @@ if(!class_exists('WPAU_Stock_Ticker_Settings'))
         	// Render the settings template
         	include(sprintf("%s/../templates/settings.php", dirname(__FILE__)));
         } // END public function plugin_settings_page()
-    } // END class WPAU_Stock_Ticker_Settings
-} // END if(!class_exists('WPAU_Stock_Ticker_Settings'))
+    } // END class WPAU_STOCK_TICKER_SETTINGS
+} // END if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))

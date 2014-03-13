@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Stock Ticker
-Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker
+Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy display ticker tape with stock prices information with data provided by Yahoo Finance.
 Version: 0.1.2
 Author: Aleksandar Urosevic
@@ -49,13 +49,15 @@ if(!class_exists('WPAU_STOCK_TICKER'))
         public static function defaults()
         {
             $defaults = array(
-                    'symbols'       => 'APPL,MSFT,INTL',
-                    'show'          => 'name',
-                    'zero'          => '#454545',
-                    'minus'         => '#D8442F',
-                    'plus'          => '#009D59',
-                    'cache_timeout' => '180', // 3 minutes
-                    'error_message' => 'Unfortunately, we could not to get stock quotes this time.'
+                'symbols'       => 'AAPL,MSFT,INTC',
+                'show'          => 'name',
+                'zero'          => '#454545',
+                'minus'         => '#D8442F',
+                'plus'          => '#009D59',
+                'cache_timeout' => '180', // 3 minutes
+                'error_message' => 'Unfortunately, we could not get stock quotes this time.',
+                'legend'        => "AAPL;Apple Inc.\nFB;Facebook, Inc.\nCSCO;Cisco Systems, Inc.\nGOOG;Google Inc.\nINTC;Intel Corporation\nLNKD;LinkedIn Corporation\nMSFT;Microsoft Corporation\nTWTR;Twitter, Inc.",
+                'custom'        => false
             );
             $options = wp_parse_args(get_option('stock_ticker_defaults'), $defaults);
             return $options;
@@ -97,6 +99,18 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 // get fresh or from transient cache stock quote
                 $st_transient_id = "st_json_".md5($symbols);
 
+                // get legend if custom enabled
+                $defaults = self::defaults();
+                if ( !empty($defaults['custom']) ){
+                    $matrix = explode("\n",$defaults['legend']);
+                    $msize = sizeof($matrix);
+                    for($m=0; $m<$msize; $m++){
+                        $line = explode(";",$matrix[$m]);
+                        $legend[trim($line[0])] = trim($line[1]);
+                    }
+                    unset($m,$msize,$matrix,$line);
+                }
+
                 // check if cache exists
                 if ( false === ( $json = get_transient( $st_transient_id ) ) || empty($json) ) {
                     // if does not exist, get new cache
@@ -107,14 +121,13 @@ if(!class_exists('WPAU_STOCK_TICKER'))
 
                     // compose YQL URL
                     $yql_url = "http://query.yahooapis.com/v1/public/yql";
+                    // $yql_query = 'select * from yahoo.finance.quotes where symbol in ('.$yql_symbols.')';
                     $yql_query = 'select Name, Symbol, LastTradePriceOnly, Change, ChangeinPercent, Volume from yahoo.finance.quotes where symbol in ('.$yql_symbols.')';
                     $yql_query_url = $yql_url . "?q=" . urlencode($yql_query);
                     $yql_query_url .= "&env=" . urlencode("store://datatables.org/alltableswithkeys");
                     $yql_query_url .= "&format=json";
                     // $yql_query_url .= "&diagnostics=false";
                     // $yql_query_url .= "&callback=";
-
-                    // dbg("cache: $yql_query_url");
 
                     // get remote JSON
                     $wprga = array(
@@ -130,9 +143,9 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                     // now cache array for N minutes
                     if ( !defined('WPAU_STOCK_TICKER_CACHE_TIMEOUT') )
                     {
-                        $defaults = WPAU_STOCK_TICKER::defaults();
+                        // $defaults = WPAU_STOCK_TICKER::defaults();
                         define('WPAU_STOCK_TICKER_CACHE_TIMEOUT',$defaults['cache_timeout']);
-                        unset($defaults);
+                        // unset($defaults);
                     }
                     set_transient( $st_transient_id, $json, WPAU_STOCK_TICKER_CACHE_TIMEOUT );
 
@@ -155,16 +168,27 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                         $q_symbol  = $quote->Symbol;
                         $q_volume  = $quote->Volume;
 
+                        // Define class based on change
                         if ( $q_change < 0 ) { $chclass = "minus"; }
                         else if ( $q_change > 0 ) { $chclass = "plus"; }
                         else { $chclass = "zero"; $q_change = "0.00"; }
 
+                        // Use custom name?
+                        if ( !empty($defaults['custom']) && !empty($legend[$q_symbol]) )
+                            $q_name = $legend[$q_symbol];
+
+                        // What to show?
                         if ( $show == "name" )
                             $company_show = $q_name;
                         else
                             $company_show = $q_symbol;
 
-                        $q .= '<li class="'.$chclass.'"><a href="http://finance.yahoo.com/q?s='.$q_symbol.'" target="_blank" title="'.$q_name.' (Vol: '.$q_volume.'; Ch: '.$q_changep.')">'.$company_show.' '.$q_price.' '.$q_change.'</a></li>';
+                        // Do not print change, volume and change% for currencies
+                        if (substr($q_symbol,-2) == "=X"){
+                            $q .= '<li class="'.$chclass.'"><a href="http://finance.yahoo.com/q?s='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$company_show.' '.$q_price.'</a></li>';
+                        } else {
+                            $q .= '<li class="'.$chclass.'"><a href="http://finance.yahoo.com/q?s='.$q_symbol.'" target="_blank" title="'.$q_name.' (Vol: '.$q_volume.'; Ch: '.$q_changep.')">'.$company_show.' '.$q_price.' '.$q_change.'</a></li>';
+                        }
                     }
                 }
                 // No results were returned
@@ -195,7 +219,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 else
                     $_SESSION['wpau_stock_ticker_ids'] .= ",#".$id;
 
-                unset($q, $out, $id, $wpau_stock_ticker_css);
+                unset($q, $out, $id, $wpau_stock_ticker_css, $defaults, $legend);
 
             }
         }
@@ -280,9 +304,7 @@ EOF;
 
         function wpau_stock_ticker_byshortcode()
         {
-            // dbg($_SESSION['wpau_stock_ticker_ids']);
             $wpau_stock_ticker_ids = $_SESSION["wpau_stock_ticker_ids"];
-            // echo "<script type=\"text/javascript\">jQuery(document).ready(function(){".$_SESSION['wpau_stock_ticker_js']."});</script>";
             echo "<script type=\"text/javascript\">jQuery(document).ready(function(){jQuery(\"$wpau_stock_ticker_ids\").webTicker();});</script>";
             echo "<style type=\"text/css\">".$_SESSION['wpau_stock_ticker_css']."</style>";
         }
@@ -291,14 +313,4 @@ EOF;
         // register stock_ticker shortcode
         add_shortcode( 'stock_ticker', array('WPAU_STOCK_TICKER','stock_ticker_shortcode') );
     }
-}
-
-function dbg($i){
-    if ( is_array($i) )
-        $o = print_r($i,1);
-    else
-        $o = $i;
-    // echo $o;
-
-    apply_filters('debug', $o);
 }
