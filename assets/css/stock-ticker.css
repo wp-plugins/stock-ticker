@@ -1,12 +1,13 @@
-ul.stock_ticker li>a:before {
-	font-family: "dashicons";
-	content: "\F460";
+.stock_ticker li>a:before {
+	content: "";
 }
-ul.stock_ticker li.plus>a:before {
-	content:"\F343";
+ul.stock_ticker .plus>a:before {
+	content: url(../img/up_g.gif);
+	margin-right: 2px;
 }
-ul.stock_ticker li.minus>a:before {
-	content:"\F347";
+ul.stock_ticker .minus>a:before {
+	content: url(../img/down_r.gif);
+	margin-right: 2px;
 }
 .tickercontainer {
 width: 100%;

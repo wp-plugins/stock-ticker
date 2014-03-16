@@ -71,6 +71,11 @@ For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, 
 * Caching quotes
 
 == Changelog ==
+= 0.1.3 =
+* Change: remove dashicons requirement and use default Yahoo Finance down/up symbols
+* Change: class for error message from .minus to .error
+* Improvement: ignore symbol case for custom names matching
+
 = 0.1.2 =
 * Fix: missing argument on settings page for do_settings_fields()
 * Change: replace jQuery stock renderer with native WordPress/PHP functions

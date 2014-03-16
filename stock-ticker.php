@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy display ticker tape with stock prices information with data provided by Yahoo Finance.
-Version: 0.1.2
+Version: 0.1.3
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -26,6 +26,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 if(!class_exists('WPAU_STOCK_TICKER'))
 {
     class WPAU_STOCK_TICKER
@@ -35,6 +36,8 @@ if(!class_exists('WPAU_STOCK_TICKER'))
          */
         public function __construct()
         {
+            define('WPAU_STOCK_TICKER_VER','0.1.3');
+
 			// Initialize Settings
 			require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
 			// Initialize Widget
@@ -106,7 +109,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                     $msize = sizeof($matrix);
                     for($m=0; $m<$msize; $m++){
                         $line = explode(";",$matrix[$m]);
-                        $legend[trim($line[0])] = trim($line[1]);
+                        $legend[strtoupper(trim($line[0]))] = trim($line[1]);
                     }
                     unset($m,$msize,$matrix,$line);
                 }
@@ -193,7 +196,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 }
                 // No results were returned
                 if(empty($q))
-                    $q = '<li class="minus">Unfortunately, we could not to get stock quotes this time.</li>';
+                    $q = '<li class="error">Unfortunately, we could not to get stock quotes this time.</li>';
 
                 $out .= $q;
 
@@ -279,13 +282,14 @@ if(class_exists('WPAU_STOCK_TICKER'))
         // JS tool for frontend
         function wpau_stock_ticker_js()
         {
-            wp_enqueue_script( 'jquery-ticker', plugin_dir_url(__FILE__) . 'assets/js/jquery.webticker.min.js', array('jquery'), '1.0.0' );
+            wp_enqueue_script( 'jquery-ticker', plugin_dir_url(__FILE__) . 'assets/js/jquery.webticker.min.js', array('jquery'), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
         	// wp_enqueue_script( 'stock-ticker', plugin_dir_url(__FILE__) . 'assets/js/stock-ticker.min.js', array('jquery'), '1.0.0' );
-            wp_enqueue_style( 'dashicons' );
+            // wp_enqueue_style( 'dashicons' );
             // dashicons (using and resource):
             // http://jameskoster.co.uk/work/using-wordpress-3-8s-dashicons-theme-plugin/
             // http://melchoyce.github.io/dashicons/
-            wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array( 'dashicons' ), '1.0.0' );
+            wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array(), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
+            // wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array( 'dashicons' ), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
 
             // get custom colours or set default colours
             $st_defaults    = WPAU_STOCK_TICKER::defaults();
