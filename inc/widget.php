@@ -37,7 +37,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 			$out .= $args['before_title'] . $title . $args['after_title'];
 
 		ob_start();
-		WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus);
+		echo WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus);
 		$out .= ob_get_contents();
 		ob_end_clean();
 

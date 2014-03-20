@@ -196,14 +196,11 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 }
                 // No results were returned
                 if(empty($q))
-                    $q = '<li class="error">Unfortunately, we could not to get stock quotes this time.</li>';
+                    $q = '<li class="error">'.$defaults['error_message'].'</li>';
 
                 $out .= $q;
 
                 $out .= '</ul>';
-
-                // print ticker content
-                echo $out;
 
                 // prepare styles
                 $wpau_stock_ticker_css = "ul#{$id}.stock_ticker li.zero a, ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
@@ -222,7 +219,11 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 else
                     $_SESSION['wpau_stock_ticker_ids'] .= ",#".$id;
 
-                unset($q, $out, $id, $wpau_stock_ticker_css, $defaults, $legend);
+
+                unset($q, $id, $wpau_stock_ticker_css, $defaults, $legend);
+
+                // print ticker content
+                return $out;
 
             }
         }
@@ -283,25 +284,19 @@ if(class_exists('WPAU_STOCK_TICKER'))
         function wpau_stock_ticker_js()
         {
             wp_enqueue_script( 'jquery-ticker', plugin_dir_url(__FILE__) . 'assets/js/jquery.webticker.min.js', array('jquery'), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
-        	// wp_enqueue_script( 'stock-ticker', plugin_dir_url(__FILE__) . 'assets/js/stock-ticker.min.js', array('jquery'), '1.0.0' );
-            // wp_enqueue_style( 'dashicons' );
-            // dashicons (using and resource):
-            // http://jameskoster.co.uk/work/using-wordpress-3-8s-dashicons-theme-plugin/
-            // http://melchoyce.github.io/dashicons/
             wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array(), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
-            // wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array( 'dashicons' ), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
 
             // get custom colours or set default colours
-            $st_defaults    = WPAU_STOCK_TICKER::defaults();
-            $st_quote_zero  = $st_defaults['zero'];
-            $st_quote_minus = $st_defaults['minus'];
-            $st_quote_plus  = $st_defaults['plus'];
+//             $st_defaults    = WPAU_STOCK_TICKER::defaults();
+//             $st_quote_zero  = $st_defaults['zero'];
+//             $st_quote_minus = $st_defaults['minus'];
+//             $st_quote_plus  = $st_defaults['plus'];
 
-            $wpau_stock_ticker_css = <<<EOF
-ul.stock_ticker li.zero a, ul.stock_ticker li.zero a:hover { color: $st_quote_zero; }
-ul.stock_ticker li.minus a, ul.stock_ticker li.minus a:hover { color: $st_quote_minus; }
-ul.stock_ticker li.plus a, ul.stock_ticker li.plus a:hover { color: $st_quote_plus; }
-EOF;
+//             $wpau_stock_ticker_css = <<<EOF
+// ul.stock_ticker li.zero a, ul.stock_ticker li.zero a:hover { color: $st_quote_zero; }
+// ul.stock_ticker li.minus a, ul.stock_ticker li.minus a:hover { color: $st_quote_minus; }
+// ul.stock_ticker li.plus a, ul.stock_ticker li.plus a:hover { color: $st_quote_plus; }
+// EOF;
             // wp_add_inline_style( 'stock-ticker', $wpau_stock_ticker_css );
         }
         add_action( 'wp_enqueue_scripts', 'wpau_stock_ticker_js' );

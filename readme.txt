@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, stock symbols, stock quotes
 Requires at least: 3.7.1
 Tested up to: 3.8.1
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -42,7 +42,7 @@ You can tune single shortcode with parameters:
 * `plus` - string with HEX colour value of positive quote change
 
 Example:
-`[stock_ticker symbols="IBM,CSCO,AAPL,HP" show="symbol" zero="#000" minus="#f00" plus="#0f0"]`
+`[stock_ticker symbols="IBM,CSCO,AAPL,HPQ" show="symbol" zero="#000" minus="#f00" plus="#0f0"]`
 
 == Installation ==
 
@@ -66,15 +66,14 @@ Easy install Stock Ticker as any other ordinary WordPress plugin
 Visit [Yahoo Finance Stock Center](http://finance.yahoo.com/stock-center/) and look for preferred symbols that you need/wish to display on your site.
 For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, IBM, Cisco, Google, Yahoo, Amazon)
 
-== TODO ==
-
-* Caching quotes
-
 == Changelog ==
 = 0.1.3 =
+* Fix: correct placement for shortcode output buffer
+* Fix: ignored custom error message from settings page
 * Change: remove dashicons requirement and use default Yahoo Finance down/up symbols
 * Change: class for error message from .minus to .error
 * Improvement: ignore symbol case for custom names matching
+* Cleanup disabled parts of code, tiny optimizations
 
 = 0.1.2 =
 * Fix: missing argument on settings page for do_settings_fields()
