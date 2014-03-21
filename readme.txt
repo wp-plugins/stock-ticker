@@ -23,7 +23,6 @@ A simple and easy configurable plugin that allows you to insert stock ticker wit
 * Define custom names for companies to be used instead shortened Yahoo Finance names
 * Strip null changes for currencies
 * Plugin uses native WordPress function to get and cache data from Yahoo Finance for predefined duration of time
-* No images, for stock indicators we uses WordPress dashicons
 * Ready to be translated to non-english languages
 
 For feature requests or help [send feedback](http://urosevic.net/wordpress/plugins/stock-ticker/ "Official plugin page") or use support forum on WordPress.
