@@ -57,6 +57,7 @@ Easy install Stock Ticker as any other ordinary WordPress plugin
 1. Global plugin settings page
 2. Widget settings
 3. Stock ticker in action
+4. Live widget preview
 
 == Frequently Asked Questions ==
 
