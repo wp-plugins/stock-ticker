@@ -9,7 +9,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget {
 		parent::__construct(
 			'stock_ticker', // Base ID
 			__('Stock Ticker', 'wpaust'), // Name
-			array( 'description' => __( 'Show ticker with stock trends from Yahoo Financies', 'wpaust' ), ) // Args
+			array( 'description' => __( 'Show ticker with stock trends', 'wpaust' ), ) // Args
 		);
 	}
 
