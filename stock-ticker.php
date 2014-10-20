@@ -2,8 +2,8 @@
 /*
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
-Description: Easy display ticker tape with stock prices information with data provided by Yahoo Finance.
-Version: 0.1.3
+Description: Easy add customizable moving ticker tapes with stock information
+Version: 0.1.4
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -26,6 +26,43 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
+Google Finance Disclaimer <http://www.google.com/intl/en-US/googlefinance/disclaimer/>
+
+Data is provided by financial exchanges and may be delayed as specified 
+by financial exchanges or our data providers. Google does not verify any 
+data and disclaims any obligation to do so.
+
+Google, its data or content providers, the financial exchanges and 
+each of their affiliates and business partners (A) expressly disclaim 
+the accuracy, adequacy, or completeness of any data and (B) shall not be 
+liable for any errors, omissions or other defects in, delays or 
+interruptions in such data, or for any actions taken in reliance thereon. 
+Neither Google nor any of our information providers will be liable for 
+any damages relating to your use of the information provided herein. 
+As used here, “business partners” does not refer to an agency, partnership, 
+or joint venture relationship between Google and any such parties.
+
+You agree not to copy, modify, reformat, download, store, reproduce, 
+reprocess, transmit or redistribute any data or information found herein 
+or use any such data or information in a commercial enterprise without 
+obtaining prior written consent. All data and information is provided “as is” 
+for personal informational purposes only, and is not intended for trading 
+purposes or advice. Please consult your broker or financial representative 
+to verify pricing before executing any trade.
+
+Either Google or its third party data or content providers have exclusive 
+proprietary rights in the data and information provided.
+
+Please find all listed exchanges and indices covered by Google along with 
+their respective time delays from the table on the left.
+
+Advertisements presented on Google Finance are solely the responsibility 
+of the party from whom the ad originates. Neither Google nor any of its 
+data licensors endorses or is responsible for the content of any advertisement 
+or any goods or services offered therein.
+
+ */
 
 if(!class_exists('WPAU_STOCK_TICKER'))
 {
@@ -36,7 +73,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
          */
         public function __construct()
         {
-            define('WPAU_STOCK_TICKER_VER','0.1.3');
+            define('WPAU_STOCK_TICKER_VER','0.1.4');
 
 			// Initialize Settings
 			require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
@@ -59,8 +96,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 'plus'          => '#009D59',
                 'cache_timeout' => '180', // 3 minutes
                 'error_message' => 'Unfortunately, we could not get stock quotes this time.',
-                'legend'        => "AAPL;Apple Inc.\nFB;Facebook, Inc.\nCSCO;Cisco Systems, Inc.\nGOOG;Google Inc.\nINTC;Intel Corporation\nLNKD;LinkedIn Corporation\nMSFT;Microsoft Corporation\nTWTR;Twitter, Inc.",
-                'custom'        => false
+                'legend'        => "AAPL;Apple Inc.\nFB;Facebook, Inc.\nCSCO;Cisco Systems, Inc.\nGOOG;Google Inc.\nINTC;Intel Corporation\nLNKD;LinkedIn Corporation\nMSFT;Microsoft Corporation\nTWTR;Twitter, Inc.\nBABA;Alibaba Group Holding Limited\nIBM;International Business Machines Corporation"
             );
             $options = wp_parse_args(get_option('stock_ticker_defaults'), $defaults);
             return $options;
@@ -102,46 +138,43 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 // get fresh or from transient cache stock quote
                 $st_transient_id = "st_json_".md5($symbols);
 
-                // get legend if custom enabled
+                // get legend for company names
                 $defaults = self::defaults();
-                if ( !empty($defaults['custom']) ){
-                    $matrix = explode("\n",$defaults['legend']);
-                    $msize = sizeof($matrix);
-                    for($m=0; $m<$msize; $m++){
-                        $line = explode(";",$matrix[$m]);
-                        $legend[strtoupper(trim($line[0]))] = trim($line[1]);
-                    }
-                    unset($m,$msize,$matrix,$line);
+                $matrix = explode("\n",$defaults['legend']);
+                $msize = sizeof($matrix);
+                for($m=0; $m<$msize; $m++){
+                    $line = explode(";",$matrix[$m]);
+                    $legend[strtoupper(trim($line[0]))] = trim($line[1]);
                 }
+                unset($m,$msize,$matrix,$line);
 
                 // check if cache exists
                 if ( false === ( $json = get_transient( $st_transient_id ) ) || empty($json) ) {
                     // if does not exist, get new cache
 
-                    // clean and prepare symbols for YQL call
-                    $yql_symbols = preg_replace('/\s+/', '', $symbols);
-                    $yql_symbols = '"' . str_replace(',', '","', $yql_symbols) . '"';
+                    // clean and prepare symbols for query
+                    $exc_symbols = preg_replace('/\s+/', '', $symbols);
+                    // adapt ^DIJ to .DJI
+                    $exc_symbols = preg_replace('/\^/', '.', $exc_symbols);
+                    // adapt currency symbols EURGBP=X to CURRENCY:EURGBP
+                    $exc_symbols = preg_replace('/([a-zA-Z]*)\=X/i',"CURRENCY:$1",$exc_symbols);
 
-                    // compose YQL URL
-                    $yql_url = "http://query.yahooapis.com/v1/public/yql";
-                    // $yql_query = 'select * from yahoo.finance.quotes where symbol in ('.$yql_symbols.')';
-                    $yql_query = 'select Name, Symbol, LastTradePriceOnly, Change, ChangeinPercent, Volume from yahoo.finance.quotes where symbol in ('.$yql_symbols.')';
-                    $yql_query_url = $yql_url . "?q=" . urlencode($yql_query);
-                    $yql_query_url .= "&env=" . urlencode("store://datatables.org/alltableswithkeys");
-                    $yql_query_url .= "&format=json";
-                    // $yql_query_url .= "&diagnostics=false";
-                    // $yql_query_url .= "&callback=";
-
-                    // get remote JSON
+                    // compose URL
+                    $exc_url = "http://finance.google.com/finance/info?client=ig&q=$exc_symbols";
+                    // set timeout
                     $wprga = array(
                         'timeout' => 2 // two seconds only
                     );
-                    $response = wp_remote_get($yql_query_url, $wprga);
-                    $json = wp_remote_retrieve_body( $response );
-
-                    // prepare nice array
-                    // $json = json_decode($json, true);
-                    $json = json_decode($json);
+                    // get stock from Google
+                    $response = wp_remote_get($exc_url, $wprga);
+                    // get content from response
+                    $data = wp_remote_retrieve_body( $response );
+                    // remove newlines from content
+                    $data = str_replace( "\n", "", $data );
+                    // remove // from content
+                    $data = str_replace('/', '', $data);
+                    // decode data to JSON
+                    $json = json_decode($data);
 
                     // now cache array for N minutes
                     if ( !defined('WPAU_STOCK_TICKER_CACHE_TIMEOUT') )
@@ -153,44 +186,46 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                     set_transient( $st_transient_id, $json, WPAU_STOCK_TICKER_CACHE_TIMEOUT );
 
                     // free some memory: destroy all vars that we temporary used here
-                    unset($yql_symbols, $yql_url, $yql_query, $yql_query_url, $reponse);
+                    unset($exc_symbols, $exc_url, $reponse);
                 }
 
+                // prepare ticker
                 $id = 'stock_ticker_'. substr(md5(mt_rand()),0,8);
                 $out = '<ul id="' .$id. '" class="stock_ticker">';
 
-                // prepare ticker
-                if(!empty($json) && !is_null($json->query->results)){
+                // process quotes
+                if(!empty($json) && !is_null($json[0]->id)){
                     $q = "";
                     // Parse results and extract data to display
-                    foreach($json->query->results->quote as $quote){
-                        $q_change  = $quote->Change;
-                        $q_price   = $quote->LastTradePriceOnly;
-                        $q_name    = $quote->Name;
-                        $q_changep = $quote->ChangeinPercent;
-                        $q_symbol  = $quote->Symbol;
-                        $q_volume  = $quote->Volume;
+                    foreach($json as $quote){
+                        $q_change  = $quote->c;
+                        $q_price   = $quote->l;
+                        $q_name    = $quote->t;
+                        $q_changep = $quote->cp;
+                        $q_symbol  = $quote->t;
+                        $q_ltrade  = $quote->lt;
+                        $q_exch    = $quote->e;
 
                         // Define class based on change
                         if ( $q_change < 0 ) { $chclass = "minus"; }
                         else if ( $q_change > 0 ) { $chclass = "plus"; }
                         else { $chclass = "zero"; $q_change = "0.00"; }
 
-                        // Use custom name?
-                        if ( !empty($defaults['custom']) && !empty($legend[$q_symbol]) )
+                        // Get custom company name if exists
+                        if ( !empty($legend[$q_symbol]) )
                             $q_name = $legend[$q_symbol];
 
-                        // What to show?
+                        // What to show: Symbol or Company Name?
                         if ( $show == "name" )
                             $company_show = $q_name;
                         else
                             $company_show = $q_symbol;
 
                         // Do not print change, volume and change% for currencies
-                        if (substr($q_symbol,-2) == "=X"){
-                            $q .= '<li class="'.$chclass.'"><a href="http://finance.yahoo.com/q?s='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$company_show.' '.$q_price.'</a></li>';
+                        if ($q_exch == "CURRENCY"){
+                            $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.'=X '.$q_price.'</a></li>';
                         } else {
-                            $q .= '<li class="'.$chclass.'"><a href="http://finance.yahoo.com/q?s='.$q_symbol.'" target="_blank" title="'.$q_name.' (Vol: '.$q_volume.'; Ch: '.$q_changep.')">'.$company_show.' '.$q_price.' '.$q_change.'</a></li>';
+                            $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
                         }
                     }
                 }
@@ -285,19 +320,6 @@ if(class_exists('WPAU_STOCK_TICKER'))
         {
             wp_enqueue_script( 'jquery-ticker', plugin_dir_url(__FILE__) . 'assets/js/jquery.webticker.min.js', array('jquery'), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
             wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array(), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
-
-            // get custom colours or set default colours
-//             $st_defaults    = WPAU_STOCK_TICKER::defaults();
-//             $st_quote_zero  = $st_defaults['zero'];
-//             $st_quote_minus = $st_defaults['minus'];
-//             $st_quote_plus  = $st_defaults['plus'];
-
-//             $wpau_stock_ticker_css = <<<EOF
-// ul.stock_ticker li.zero a, ul.stock_ticker li.zero a:hover { color: $st_quote_zero; }
-// ul.stock_ticker li.minus a, ul.stock_ticker li.minus a:hover { color: $st_quote_minus; }
-// ul.stock_ticker li.plus a, ul.stock_ticker li.plus a:hover { color: $st_quote_plus; }
-// EOF;
-            // wp_add_inline_style( 'stock-ticker', $wpau_stock_ticker_css );
         }
         add_action( 'wp_enqueue_scripts', 'wpau_stock_ticker_js' );
 

@@ -1,34 +1,30 @@
 === Stock Ticker ===
 Contributors: urkekg
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q6Q762MQ97XJ6
-Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, stock symbols, stock quotes
-Requires at least: 3.7.1
-Tested up to: 3.9beta3
-Stable tag: 0.1.3
+Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, nyse, tock symbols, stock quotes
+Requires at least: 3.9.0
+Tested up to: 4.0
+Stable tag: 0.1.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Easy display ticker tape with stock prices information with data provided by Yahoo Finance.
+Easy add customizable moving ticker tapes with stock information.
 
 == Description ==
 
-A simple and easy configurable plugin that allows you to insert stock ticker with stock prices information with data provided by Yahoo Finance. Insertion is enabled by shortcode or multi instance widget.
+A simple and easy configurable plugin that allows you to insert stock ticker with stock price information (data provided by Google Finance). Insertion is enabled by shortcode or multi instance widget.
 
 = Features =
 * Configure default set of stock symbols that will be displayed in ticker
 * Configure default presence of company as Company Name or as Stock Symbol
 * Configure colours for unchanged quote, negative and positive changes
 * Both, global and widget settings provides easy colour picker for selecting all three colour values
-* Tooltip for ticker item display company name, stock volume and change percentage
-* Define custom names for companies to be used instead shortened Yahoo Finance names
-* Strip null changes for currencies
-* Plugin uses native WordPress function to get and cache data from Yahoo Finance for predefined duration of time
+* Tooltip for ticker item display company name, exchange and last trade date/time
+* Define custom names for companies to be used instead symbols
+* Plugin uses native WordPress function to get and cache data from Google Finance for predefined duration of time
 * Ready to be translated to non-english languages
 
 For feature requests or help [send feedback](http://urosevic.net/wordpress/plugins/stock-ticker/ "Official plugin page") or use support forum on WordPress.
-
-= Known issues =
-Yahoo Finance does not provide quotes for `^DJI` nor `INDU` (Dow Jones Industrial Average) over YQL API calls, so we could not provide this symbol in Stock Ticker.
 
 = Shortcode =
 Use simple shortcode `[stock_ticker]` without any parameter in post or page, to display ticker with default (global) settings.
@@ -66,7 +62,27 @@ Easy install Stock Ticker as any other ordinary WordPress plugin
 Visit [Yahoo Finance Stock Center](http://finance.yahoo.com/stock-center/) and look for preferred symbols that you need/wish to display on your site.
 For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, IBM, Cisco, Google, Yahoo, Amazon)
 
+= How to get Dow Jones Industrial Average? =
+
+Since version 1.4.0 we use Google Finance, that support ^DJI exchange. To get quote for this exchange, simply add symbol `.DJI` or `^DJI`.
+
+= How to get currency exchange rate? =
+
+Use Currency symbols like `EURGBP=X` to get rate of `1 Euro` = `? British Pounds`
+
+= How to add Stock Ticker to header theme file? =
+
+Add this to your template file (you also can add custom parameters for shortcode):
+
+`<?php echo do_shortcode('[stock_ticker]'); ?>`
+
 == Changelog ==
+= 0.1.4 =
+* Change: Deprecated Yahoo! Finance as source (violating the Terms of Service of Yahoo with regards to the used data), replaced with Google Finance
+* Change: No more Volume info in quote tooltip (as Google Finance does not provide that data)
+* Change: Link chart on Google Finance instead Yahoo Finance
+* Tested on WordPress 4.0+
+
 = 0.1.3 =
 * Fix: correct placement for shortcode output buffer
 * Fix: ignored custom error message from settings page
