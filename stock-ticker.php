@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy add customizable moving ticker tapes with stock information
-Version: 0.1.4.1
+Version: 0.1.4.2
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -76,7 +76,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
          */
         public function __construct()
         {
-            define('WPAU_STOCK_TICKER_VER','0.1.4.1');
+            define('WPAU_STOCK_TICKER_VER','0.1.4.2');
             
             // Initialize Settings
             require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
@@ -340,11 +340,13 @@ if(class_exists('WPAU_STOCK_TICKER'))
         function wpau_stock_ticker_byshortcode()
         {
             global $wpau_stock_ticker;
-            if ( !empty($wpau_stock_ticker::$wpau_stock_ticker_ids) )
+            // make it to work with PHP <5.3
+            $ticker_class_vars = get_class_vars('wpau_stock_ticker');
+            if ( !is_null($ticker_class_vars['wpau_stock_ticker_ids']) )
             {
-                echo "<script type=\"text/javascript\">jQuery(document).ready(function(){jQuery(\"".$wpau_stock_ticker::$wpau_stock_ticker_ids."\").webTicker();});</script>";
-                if ( !empty($wpau_stock_ticker::$wpau_stock_ticker_css) )
-                    echo "<style type=\"text/css\">".$wpau_stock_ticker::$wpau_stock_ticker_css."</style>";
+                echo "<script type=\"text/javascript\">jQuery(document).ready(function(){jQuery(\"".$ticker_class_vars['wpau_stock_ticker_ids']."\").webTicker();});</script>";
+                if ( !empty($ticker_class_vars['wpau_stock_ticker_css']) )
+                    echo "<style type=\"text/css\">".$ticker_class_vars['wpau_stock_ticker_css']."</style>";
             }
         }
         add_action( 'wp_footer', 'wpau_stock_ticker_byshortcode' );

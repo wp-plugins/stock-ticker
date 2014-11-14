@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, nyse, tock symbols, stock quotes
 Requires at least: 3.9.0
 Tested up to: 4.1
-Stable tag: 0.1.4.1
+Stable tag: 0.1.4.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -83,6 +83,9 @@ Add this to your template file (you also can add custom parameters for shortcode
 `<?php echo do_shortcode('[stock_ticker]'); ?>`
 
 == Changelog ==
+= 0.1.4.2 =
+* Fix: broken support for PHP pre-5.3 introduced in previous release: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM, expecting ')'
+
 = 0.1.4.1 =
 * Fix: Previous update does not output in Enfold theme
 * Fix: Prevent jumping by displaying unordered list before output become scrolling ticker
