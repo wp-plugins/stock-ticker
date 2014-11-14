@@ -23,29 +23,51 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
      */
     public function widget( $args, $instance )
     {
+        // use cached widget in customizer
+        if ( ! $this->is_preview() ) {
+            $cached = wp_cache_get( 'stock_ticker' );
+            if ( ! empty( $cached ) ) {
+                echo $cached;
+                return;
+            }
+            ob_start();
+        }
+
+        // get defaults in instance is empty (for customizer)
+        if ( empty($instance) )
+        {
+            $instance = WPAU_STOCK_TICKER::defaults();
+            $instance['title'] = __('Stock Ticker', 'wpaust');
+        }
+
         // outputs the content of the widget
-        $title   = apply_filters( 'widget_title', $instance['title'] );
+        if ( !empty($instance['title']) )
+            $title   = apply_filters( 'widget_title', $instance['title'] );
+
+        if ( empty($instance['symbols']) )
+            return;
+
         $symbols = $instance['symbols'];
         $show    = $instance['show'];
-        
         $zero    = $instance['zero'];
         $minus   = $instance['minus'];
         $plus    = $instance['plus'];
 
-        $out = $args['before_widget'];
+        // output live stock ticker widget
+        echo $args['before_widget'];
 
         if ( ! empty( $title ) )
-            $out .= $args['before_title'] . $title . $args['after_title'];
+            echo $args['before_title'] . $title . $args['after_title'];
 
-        ob_start();
         echo WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus);
-        $out .= ob_get_contents();
-        ob_end_clean();
 
-        $out .= $args['after_widget'];
+        echo $args['after_widget'];
 
-        // output stock ticker widget
-        echo $out;
+        // end cache in customizer
+        if ( ! $this->is_preview() ) {
+                $cached = ob_get_flush();
+                wp_cache_set( 'stock_ticker', $cached );
+        }
     }
 
     /**
@@ -72,14 +94,14 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
             $symbols = $instance[ 'symbols' ];
         }
         else {
-            $symbols = $defaults['symbols'];
+            $symbols = $defaults[ 'symbols' ];
         }
         if ( isset( $instance[ 'show' ] ) )
         {
             $show = $instance[ 'show' ];
         }
         else {
-            $show = $defaults['show'];
+            $show = $defaults[ 'show' ];
         }
 
         if ( isset( $instance[ 'zero' ] ) )

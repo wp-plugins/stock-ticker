@@ -83,6 +83,9 @@ Add this to your template file (you also can add custom parameters for shortcode
 `<?php echo do_shortcode('[stock_ticker]'); ?>`
 
 == Changelog ==
+= 0.1.4.3 =
+* Fix: Cache safe widget in Customizer - preview immediately after inserting widget to widget area
+
 = 0.1.4.2 =
 * Fix: broken support for PHP pre-5.3 introduced in previous release: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM, expecting ')'
 
