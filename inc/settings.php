@@ -1,18 +1,18 @@
 <?php
 if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 {
-	class WPAU_STOCK_TICKER_SETTINGS
-	{
-		/**
-		 * Construct the plugin object
-		 */
-		public function __construct()
-		{
-			// register actions
+    class WPAU_STOCK_TICKER_SETTINGS
+    {
+        /**
+         * Construct the plugin object
+         */
+        public function __construct()
+        {
+            // register actions
             add_action('admin_init', array(&$this, 'admin_init'));
-        	add_action('admin_menu', array(&$this, 'add_menu'));
-		} // END public function __construct
-		
+            add_action('admin_menu', array(&$this, 'add_menu'));
+        } // END public function __construct
+        
         /**
          * hook into WP's admin_init action hook
          */
@@ -33,7 +33,7 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                 array(&$this, 'settings_default_section_description'), 
                 'wpau_stock_ticker'
             );
-        	
+            
             // add setting's fields
             add_settings_field(
                 'wpau_stock_ticker-symbols', 
@@ -125,6 +125,7 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                 )
             );
             // enable custom name usage
+            /*
             add_settings_field(
                 'wpau_stock_ticker-custom', 
                 __('Use Custom Names','wpaust'), 
@@ -138,6 +139,7 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                     'description' => __('Use defined Custom Names instead default Yahoo Finance names','wpaust')
                 )
             );
+            */
             // caching timeout field
             add_settings_field(
                 'wpau_stock_ticker-cache_timeout', 
@@ -164,6 +166,22 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                     'description' => __('When Stock Ticker fail to grab quote set from Yahoo Finance, display this mesage in ticker','wpaust'),
                     'class'       => 'widefat',
                     'value'       => $defaults['error_message'],
+                )
+            );
+
+            // default styling
+            add_settings_field(
+                'wpau_stock_ticker-style', 
+                __('Custom Style','wpaust'), 
+                array(&$this, 'settings_field_textarea'), 
+                'wpau_stock_ticker', 
+                'advanced_settings',
+                array(
+                    'field'       => "stock_ticker_defaults[style]",
+                    'class'       => 'widefat',
+                    'rows'        => 1,
+                    'value'       => $defaults['style'],
+                    'description' => __('Define custom CSS style for ticker item (font family, size, weight)','wpaust')
                 )
             );
             // Possibly do additional admin_init tasks
@@ -235,31 +253,31 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 
         /**
          * add a menu
-         */		
+         */        
         public function add_menu()
         {
             // Add a page to manage this plugin's settings
-        	add_options_page(
-        	    __('Stock Ticker Settings','wpaust'), 
-        	    __('Stock Ticker','wpaust'), 
-        	    'manage_options', 
-        	    'wpau_stock_ticker', 
-        	    array(&$this, 'plugin_settings_page')
-        	);
+            add_options_page(
+                __('Stock Ticker Settings','wpaust'), 
+                __('Stock Ticker','wpaust'), 
+                'manage_options', 
+                'wpau_stock_ticker', 
+                array(&$this, 'plugin_settings_page')
+            );
         } // END public function add_menu()
     
         /**
          * Menu Callback
-         */		
+         */        
         public function plugin_settings_page()
         {
-        	if(!current_user_can('manage_options'))
-        	{
-        		wp_die(__('You do not have sufficient permissions to access this page.'));
-        	}
-	
-        	// Render the settings template
-        	include(sprintf("%s/../templates/settings.php", dirname(__FILE__)));
+            if(!current_user_can('manage_options'))
+            {
+                wp_die(__('You do not have sufficient permissions to access this page.'));
+            }
+    
+            // Render the settings template
+            include(sprintf("%s/../templates/settings.php", dirname(__FILE__)));
         } // END public function plugin_settings_page()
     } // END class WPAU_STOCK_TICKER_SETTINGS
 } // END if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))

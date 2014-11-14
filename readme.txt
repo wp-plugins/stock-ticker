@@ -3,8 +3,8 @@ Contributors: urkekg
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q6Q762MQ97XJ6
 Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, nyse, tock symbols, stock quotes
 Requires at least: 3.9.0
-Tested up to: 4.0
-Stable tag: 0.1.4
+Tested up to: 4.1
+Stable tag: 0.1.4.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -70,6 +70,12 @@ Since version 1.4.0 we use Google Finance, that support ^DJI exchange. To get qu
 
 Use Currency symbols like `EURGBP=X` to get rate of `1 Euro` = `? British Pounds`
 
+= How to get descriptive title for currency exchange rates =
+
+Add to `Custom Names` legend currency exchange symbol w/o `=X` part, like:
+
+`EURGBP;Euro (€) ⇨ British Pound Sterling (£)`
+
 = How to add Stock Ticker to header theme file? =
 
 Add this to your template file (you also can add custom parameters for shortcode):
@@ -77,6 +83,14 @@ Add this to your template file (you also can add custom parameters for shortcode
 `<?php echo do_shortcode('[stock_ticker]'); ?>`
 
 == Changelog ==
+= 0.1.4.1 =
+* Fix: Previous update does not output in Enfold theme
+* Fix: Prevent jumping by displaying unordered list before output become scrolling ticker
+* Change: Add change value and change percent for currency exchange rates
+* Change: Remove option to toggle custom company name because Google Finance does not have company name returned in JSON
+* Add: More default Custom Names (^DJI and EURGBP=X)
+* Add: Option to set custom style for ticker item (font family, weight, size)
+
 = 0.1.4 =
 * Change: Deprecated Yahoo! Finance as source (violating the Terms of Service of Yahoo with regards to the used data), replaced with Google Finance
 * Change: No more Volume info in quote tooltip (as Google Finance does not provide that data)

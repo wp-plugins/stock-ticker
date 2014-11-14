@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy add customizable moving ticker tapes with stock information
-Version: 0.1.4
+Version: 0.1.4.1
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -68,19 +68,22 @@ if(!class_exists('WPAU_STOCK_TICKER'))
 {
     class WPAU_STOCK_TICKER
     {
+        public static $wpau_stock_ticker_ids = NULL;
+        public static $wpau_stock_ticker_css = NULL;
+
         /**
          * Construct the plugin object
          */
         public function __construct()
         {
-            define('WPAU_STOCK_TICKER_VER','0.1.4');
+            define('WPAU_STOCK_TICKER_VER','0.1.4.1');
+            
+            // Initialize Settings
+            require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
+            // Initialize Widget
+            require_once(sprintf("%s/inc/widget.php", dirname(__FILE__)));
 
-			// Initialize Settings
-			require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
-			// Initialize Widget
-			require_once(sprintf("%s/inc/widget.php", dirname(__FILE__)));
-
-			$WPAU_Stock_Ticker_Settings = new WPAU_Stock_Ticker_Settings();
+            $WPAU_Stock_Ticker_Settings = new WPAU_Stock_Ticker_Settings();
         } // END public function __construct
 
         /**
@@ -96,7 +99,8 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 'plus'          => '#009D59',
                 'cache_timeout' => '180', // 3 minutes
                 'error_message' => 'Unfortunately, we could not get stock quotes this time.',
-                'legend'        => "AAPL;Apple Inc.\nFB;Facebook, Inc.\nCSCO;Cisco Systems, Inc.\nGOOG;Google Inc.\nINTC;Intel Corporation\nLNKD;LinkedIn Corporation\nMSFT;Microsoft Corporation\nTWTR;Twitter, Inc.\nBABA;Alibaba Group Holding Limited\nIBM;International Business Machines Corporation"
+                'legend'        => "AAPL;Apple Inc.\nFB;Facebook, Inc.\nCSCO;Cisco Systems, Inc.\nGOOG;Google Inc.\nINTC;Intel Corporation\nLNKD;LinkedIn Corporation\nMSFT;Microsoft Corporation\nTWTR;Twitter, Inc.\nBABA;Alibaba Group Holding Limited\nIBM;International Business Machines Corporation\n.DJI;Dow Jones Industrial Average\nEURGBP;Euro (€) ⇨ British Pound Sterling (£)",
+                'style'         => 'font-family: "Open Sans", Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px;'
             );
             $options = wp_parse_args(get_option('stock_ticker_defaults'), $defaults);
             return $options;
@@ -109,7 +113,8 @@ if(!class_exists('WPAU_STOCK_TICKER'))
         {
             // Transit old settings to new format
             $defaults = self::defaults();
-            if ( get_option('st_symbols') ) {
+            if ( get_option('st_symbols') )
+            {
                 $defaults['symbols'] = get_option('st_symbols');
                 delete_option('st_symbols');
             }
@@ -142,14 +147,16 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 $defaults = self::defaults();
                 $matrix = explode("\n",$defaults['legend']);
                 $msize = sizeof($matrix);
-                for($m=0; $m<$msize; $m++){
+                for($m=0; $m<$msize; $m++)
+                {
                     $line = explode(";",$matrix[$m]);
                     $legend[strtoupper(trim($line[0]))] = trim($line[1]);
                 }
                 unset($m,$msize,$matrix,$line);
 
                 // check if cache exists
-                if ( false === ( $json = get_transient( $st_transient_id ) ) || empty($json) ) {
+                if ( false === ( $json = get_transient( $st_transient_id ) ) || empty($json) )
+                {
                     // if does not exist, get new cache
 
                     // clean and prepare symbols for query
@@ -194,10 +201,12 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 $out = '<ul id="' .$id. '" class="stock_ticker">';
 
                 // process quotes
-                if(!empty($json) && !is_null($json[0]->id)){
+                if(!empty($json) && !is_null($json[0]->id))
+                {
                     $q = "";
                     // Parse results and extract data to display
-                    foreach($json as $quote){
+                    foreach($json as $quote)
+                    {
                         $q_change  = $quote->c;
                         $q_price   = $quote->l;
                         $q_name    = $quote->t;
@@ -222,8 +231,14 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                             $company_show = $q_symbol;
 
                         // Do not print change, volume and change% for currencies
-                        if ($q_exch == "CURRENCY"){
-                            $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.'=X '.$q_price.'</a></li>';
+                        if ($q_exch == "CURRENCY")
+                        {
+                            if ( $q_symbol == $q_name )
+                            {
+                                $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.'=X '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
+                            } else {
+                                $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
+                            }
                         } else {
                             $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
                         }
@@ -238,24 +253,23 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 $out .= '</ul>';
 
                 // prepare styles
-                $wpau_stock_ticker_css = "ul#{$id}.stock_ticker li.zero a, ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
-                $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.minus a, ul#{$id}.stock_ticker li.minus a:hover { color: $minus; }";
-                $wpau_stock_ticker_css .= "ul#{$id}.stock_ticker li.plus a, ul#{$id}.stock_ticker li.plus a:hover { color: $plus; }";
+                $css = "ul#{$id}.stock_ticker li.zero a,ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
+                $css .= "ul#{$id}.stock_ticker li.minus a,ul#{$id}.stock_ticker li.minus a:hover { color: $minus; }";
+                $css .= "ul#{$id}.stock_ticker li.plus a,ul#{$id}.stock_ticker li.plus a:hover { color: $plus; }";
 
                 // append customized styles
-                if (empty($_SESSION['wpau_stock_ticker_css']))
-                    $_SESSION['wpau_stock_ticker_css'] = $wpau_stock_ticker_css;
+                if ( is_null(self::$wpau_stock_ticker_css) )
+                    self::$wpau_stock_ticker_css = ( empty($defaults['style']) ) ? $css : "ul.stock_ticker li a{".$defaults['style']."}$css";
                 else
-                    $_SESSION['wpau_stock_ticker_css'] .= $wpau_stock_ticker_css;
+                    self::$wpau_stock_ticker_css .= $css;
 
                 // append ticker ID
-                if ( empty($_SESSION['wpau_stock_ticker_ids']) )
-                    $_SESSION['wpau_stock_ticker_ids'] = "#".$id;
+                if ( is_null(self::$wpau_stock_ticker_ids) )
+                    self::$wpau_stock_ticker_ids = "#".$id;
                 else
-                    $_SESSION['wpau_stock_ticker_ids'] .= ",#".$id;
+                    self::$wpau_stock_ticker_ids .= ",#".$id;
 
-
-                unset($q, $id, $wpau_stock_ticker_css, $defaults, $legend);
+                unset($q, $id, $css, $defaults, $legend);
 
                 // print ticker content
                 return $out;
@@ -277,7 +291,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 'plus'    => $st_defaults['plus']
             ), $atts ) );
             if ( !empty($symbols) )
-                self::stock_ticker($symbols,$show,$zero,$minus,$plus);
+                return self::stock_ticker($symbols,$show,$zero,$minus,$plus);
         }
     } // END class WPAU_STOCK_TICKER
 } // END if(!class_exists('WPAU_STOCK_TICKER'))
@@ -325,9 +339,13 @@ if(class_exists('WPAU_STOCK_TICKER'))
 
         function wpau_stock_ticker_byshortcode()
         {
-            $wpau_stock_ticker_ids = $_SESSION["wpau_stock_ticker_ids"];
-            echo "<script type=\"text/javascript\">jQuery(document).ready(function(){jQuery(\"$wpau_stock_ticker_ids\").webTicker();});</script>";
-            echo "<style type=\"text/css\">".$_SESSION['wpau_stock_ticker_css']."</style>";
+            global $wpau_stock_ticker;
+            if ( !empty($wpau_stock_ticker::$wpau_stock_ticker_ids) )
+            {
+                echo "<script type=\"text/javascript\">jQuery(document).ready(function(){jQuery(\"".$wpau_stock_ticker::$wpau_stock_ticker_ids."\").webTicker();});</script>";
+                if ( !empty($wpau_stock_ticker::$wpau_stock_ticker_css) )
+                    echo "<style type=\"text/css\">".$wpau_stock_ticker::$wpau_stock_ticker_css."</style>";
+            }
         }
         add_action( 'wp_footer', 'wpau_stock_ticker_byshortcode' );
 
