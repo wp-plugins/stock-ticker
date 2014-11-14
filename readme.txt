@@ -30,6 +30,7 @@ For feature requests or help [send feedback](http://urosevic.net/wordpress/plugi
 Use simple shortcode `[stock_ticker]` without any parameter in post or page, to display ticker with default (global) settings.
 
 You can tune single shortcode with parameters:
+
 * `symbols` - string with single or comma separated array of stock symbols
 * `show` - string that define how will company be represent on ticker; can be `name` for Company Name, or `symbol` for Stock Symbol
 * `zero` - string with HEX colour value of unchanged quote
@@ -83,6 +84,7 @@ Add this to your template file (you also can add custom parameters for shortcode
 `<?php echo do_shortcode('[stock_ticker]'); ?>`
 
 == Changelog ==
+
 = 0.1.4.3 =
 * Fix: Cache safe widget in Customizer - preview immediately after inserting widget to widget area
 
