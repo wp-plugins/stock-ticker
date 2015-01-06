@@ -107,7 +107,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         if ( isset( $instance[ 'zero' ] ) )
             $zero = $instance[ 'zero' ];
         else
-            $zero = $defaults['zero']; 
+            $zero = $defaults['zero'];
 
         if ( isset( $instance[ 'minus' ] ) )
             $minus = $instance[ 'minus' ];
@@ -121,16 +121,16 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
 
         ?>
         <p>
-        <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label> 
+        <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label>
         <input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
         </p>
         <p>
-        <label for="<?php echo $this->get_field_id( 'symbols' ); ?>"><?php _e( 'Stock Symbols','wpaust' ); ?>:</label> 
-        <input class="widefat" id="<?php echo $this->get_field_id( 'symbols' ); ?>" name="<?php echo $this->get_field_name( 'symbols' ); ?>" type="text" value="<?php echo esc_attr( $symbols ); ?>" />
+        <label for="<?php echo $this->get_field_id( 'symbols' ); ?>"><?php _e( 'Stock Symbols','wpaust' ); ?>:</label>
+        <input class="widefat" id="<?php echo $this->get_field_id( 'symbols' ); ?>" name="<?php echo $this->get_field_name( 'symbols' ); ?>" type="text" value="<?php echo esc_attr( $symbols ); ?>" title="<?php _e('For currencies use format EURGBP=X; for Dow Jones use ^DJI; for specific stock exchange use format EXCHANGE:SYMBOL like LON:FFX', 'wpaust'); ?>" />
         </p>
 
         <p>
-        <label for="<?php echo $this->get_field_id( 'show' ); ?>"><?php _e( 'Represent Company as' ); ?>:</label> 
+        <label for="<?php echo $this->get_field_id( 'show' ); ?>"><?php _e( 'Represent Company as' ); ?>:</label>
         <select class="widefat" id="<?php echo $this->get_field_id( 'show' ); ?>" name="<?php echo $this->get_field_name( 'show' ); ?>">
             <option <?php echo ($show == "name") ? 'selected="selected"' : ''; ?> value="name"><?php _e('Company Name', 'wpaust'); ?></option>
             <option <?php echo ($show == "symbol") ? 'selected="selected"' : ''; ?> value="symbol"><?php _e('Stock Symbol', 'wpaust'); ?></option>
@@ -173,7 +173,7 @@ jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
 });
 //]]>
 </script>
-        <?php 
+        <?php
     }
 
     /**

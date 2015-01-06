@@ -8,7 +8,6 @@ Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
 */
-
 /*
 Copyright 2014 Aleksandar Urosevic (urke.kg@gmail.com)
 
@@ -29,37 +28,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*
 Google Finance Disclaimer <http://www.google.com/intl/en-US/googlefinance/disclaimer/>
 
-Data is provided by financial exchanges and may be delayed as specified 
-by financial exchanges or our data providers. Google does not verify any 
+Data is provided by financial exchanges and may be delayed as specified
+by financial exchanges or our data providers. Google does not verify any
 data and disclaims any obligation to do so.
 
-Google, its data or content providers, the financial exchanges and 
-each of their affiliates and business partners (A) expressly disclaim 
-the accuracy, adequacy, or completeness of any data and (B) shall not be 
-liable for any errors, omissions or other defects in, delays or 
-interruptions in such data, or for any actions taken in reliance thereon. 
-Neither Google nor any of our information providers will be liable for 
-any damages relating to your use of the information provided herein. 
-As used here, “business partners” does not refer to an agency, partnership, 
+Google, its data or content providers, the financial exchanges and
+each of their affiliates and business partners (A) expressly disclaim
+the accuracy, adequacy, or completeness of any data and (B) shall not be
+liable for any errors, omissions or other defects in, delays or
+interruptions in such data, or for any actions taken in reliance thereon.
+Neither Google nor any of our information providers will be liable for
+any damages relating to your use of the information provided herein.
+As used here, “business partners” does not refer to an agency, partnership,
 or joint venture relationship between Google and any such parties.
 
-You agree not to copy, modify, reformat, download, store, reproduce, 
-reprocess, transmit or redistribute any data or information found herein 
-or use any such data or information in a commercial enterprise without 
-obtaining prior written consent. All data and information is provided “as is” 
-for personal informational purposes only, and is not intended for trading 
-purposes or advice. Please consult your broker or financial representative 
+You agree not to copy, modify, reformat, download, store, reproduce,
+reprocess, transmit or redistribute any data or information found herein
+or use any such data or information in a commercial enterprise without
+obtaining prior written consent. All data and information is provided “as is”
+for personal informational purposes only, and is not intended for trading
+purposes or advice. Please consult your broker or financial representative
 to verify pricing before executing any trade.
 
-Either Google or its third party data or content providers have exclusive 
+Either Google or its third party data or content providers have exclusive
 proprietary rights in the data and information provided.
 
-Please find all listed exchanges and indices covered by Google along with 
+Please find all listed exchanges and indices covered by Google along with
 their respective time delays from the table on the left.
 
-Advertisements presented on Google Finance are solely the responsibility 
-of the party from whom the ad originates. Neither Google nor any of its 
-data licensors endorses or is responsible for the content of any advertisement 
+Advertisements presented on Google Finance are solely the responsibility
+of the party from whom the ad originates. Neither Google nor any of its
+data licensors endorses or is responsible for the content of any advertisement
 or any goods or services offered therein.
 
  */
@@ -77,7 +76,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
         public function __construct()
         {
             define('WPAU_STOCK_TICKER_VER','0.1.4.3');
-            
+
             // Initialize Settings
             require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
             // Initialize Widget
@@ -127,7 +126,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
 
         /**
          * Deactivate the plugin
-         */     
+         */
         public static function deactivate()
         {
             // Do nothing
@@ -163,11 +162,13 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                     $exc_symbols = preg_replace('/\s+/', '', $symbols);
                     // adapt ^DIJ to .DJI
                     $exc_symbols = preg_replace('/\^/', '.', $exc_symbols);
+                    // replace amp with code
+                    $exc_symbols = str_replace('&', '%26', $exc_symbols);
                     // adapt currency symbols EURGBP=X to CURRENCY:EURGBP
                     $exc_symbols = preg_replace('/([a-zA-Z]*)\=X/i',"CURRENCY:$1",$exc_symbols);
-
                     // compose URL
                     $exc_url = "http://finance.google.com/finance/info?client=ig&q=$exc_symbols";
+
                     // set timeout
                     $wprga = array(
                         'timeout' => 2 // two seconds only
@@ -240,7 +241,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                                 $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
                             }
                         } else {
-                            $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
+                            $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_exch.':'.$q_symbol.'" target="_blank" title="'.$q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
                         }
                     }
                 }
@@ -310,13 +311,13 @@ if(class_exists('WPAU_STOCK_TICKER'))
     {
         // Add the settings link to the plugins page
         function plugin_settings_link($links)
-        { 
-            $settings_link = '<a href="options-general.php?page=wpau_stock_ticker">Settings</a>'; 
-            array_unshift($links, $settings_link); 
-            return $links; 
+        {
+            $settings_link = '<a href="options-general.php?page=wpau_stock_ticker">Settings</a>';
+            array_unshift($links, $settings_link);
+            return $links;
         }
 
-        $plugin = plugin_basename(__FILE__); 
+        $plugin = plugin_basename(__FILE__);
         add_filter("plugin_action_links_$plugin", 'plugin_settings_link');
 
         /**

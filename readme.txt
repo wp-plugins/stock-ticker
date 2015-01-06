@@ -1,10 +1,10 @@
 === Stock Ticker ===
 Contributors: urkekg
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q6Q762MQ97XJ6
-Tags: widget, stock, ticker, securities, quote, financial, exchange, bank, market, nasdaq, nyse, tock symbols, stock quotes
+Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
 Tested up to: 4.1
-Stable tag: 0.1.4.2
+Stable tag: 0.1.4.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -77,6 +77,10 @@ Add to `Custom Names` legend currency exchange symbol w/o `=X` part, like:
 
 `EURGBP;Euro (€) ⇨ British Pound Sterling (£)`
 
+= How to get proper stock price from proper stock exchange? =
+
+Enter symbol in format `EXCHANGE:SYMBOL` like `LON:FFX`
+
 = How to add Stock Ticker to header theme file? =
 
 Add this to your template file (you also can add custom parameters for shortcode):
@@ -86,6 +90,8 @@ Add this to your template file (you also can add custom parameters for shortcode
 == Changelog ==
 
 = 0.1.4.3 =
+* Fix: Add stock exchange code to symbol link to prevent mixing stocks like CVE:CXB instead ASX:CXB
+* Fix: Add special character replacement to support symbols with amps like NSE:M&M
 * Fix: Cache safe widget in Customizer - preview immediately after inserting widget to widget area
 
 = 0.1.4.2 =
