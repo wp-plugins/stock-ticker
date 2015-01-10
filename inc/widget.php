@@ -25,7 +25,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
     {
         // use cached widget in customizer
         if ( ! $this->is_preview() ) {
-            $cached = wp_cache_get( 'stock_ticker' );
+            $cached = wp_cache_get( $args['widget_id'] );
             if ( ! empty( $cached ) ) {
                 echo $cached;
                 return;
@@ -52,6 +52,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         $zero    = $instance['zero'];
         $minus   = $instance['minus'];
         $plus    = $instance['plus'];
+        $static  = empty($instance['static']) ? '0' : '1';
 
         // output live stock ticker widget
         echo $args['before_widget'];
@@ -59,14 +60,14 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         if ( ! empty( $title ) )
             echo $args['before_title'] . $title . $args['after_title'];
 
-        echo WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus);
+        echo WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus,$static);
 
         echo $args['after_widget'];
 
         // end cache in customizer
         if ( ! $this->is_preview() ) {
                 $cached = ob_get_flush();
-                wp_cache_set( 'stock_ticker', $cached );
+                wp_cache_set( $args['widget_id'], $cached );
         }
     }
 
@@ -119,6 +120,11 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         else
             $plus = $defaults['plus'];
 
+        if ( isset( $instance[ 'static' ] ) )
+            $static = $instance[ 'static' ];
+        else
+            $static = '0';
+
         ?>
         <p>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label>
@@ -148,6 +154,12 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         <p>
         <label for="<?php echo $this->get_field_id( 'plus' ); ?>"><?php _e( 'Positive Change','wpaust' ); ?>:</label><br />
         <input class="wpau-color-field" id="<?php echo $this->get_field_id( 'plus' ); ?>" name="<?php echo $this->get_field_name( 'plus' ); ?>" type="text" value="<?php echo esc_attr( $plus ); ?>" />
+        </p>
+        <p>
+        <label for="<?php echo $this->get_field_id( 'static' ); ?>">
+        <input class="checkbox" id="<?php echo $this->get_field_id( 'static' ); ?>" name="<?php echo $this->get_field_name( 'static' ); ?>" type="checkbox" value="1" <?php checked($static, true, true); ?>" />
+        <?php _e( 'Make this ticker static (disable scrolling)','wpaust' ); ?>
+        </label>
         </p>
 
 <script type="text/javascript">
@@ -192,6 +204,7 @@ jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
         $instance['zero']    = ( ! empty( $new_instance['zero'] ) ) ? strip_tags( $new_instance['zero'] ) : '';
         $instance['minus']   = ( ! empty( $new_instance['minus'] ) ) ? strip_tags( $new_instance['minus'] ) : '';
         $instance['plus']    = ( ! empty( $new_instance['plus'] ) ) ? strip_tags( $new_instance['plus'] ) : '';
+        $instance['static']  = ( ! empty( $new_instance['static'] ) ) ? '1' : '0';
 
         return $instance;
     }

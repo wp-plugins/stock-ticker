@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
 Tested up to: 4.1
-Stable tag: 0.1.4.3
+Stable tag: 0.1.4.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -18,6 +18,7 @@ A simple and easy configurable plugin that allows you to insert stock ticker wit
 * Configure default set of stock symbols that will be displayed in ticker
 * Configure default presence of company as Company Name or as Stock Symbol
 * Configure colours for unchanged quote, negative and positive changes
+* Disable scrolling ticker and make it static for individual ticker
 * Both, global and widget settings provides easy colour picker for selecting all three colour values
 * Tooltip for ticker item display company name, exchange and last trade date/time
 * Define custom names for companies to be used instead symbols
@@ -36,9 +37,14 @@ You can tune single shortcode with parameters:
 * `zero` - string with HEX colour value of unchanged quote
 * `minus` - string with HEX colour value of negative quote change
 * `plus` - string with HEX colour value of positive quote change
+* `static` - boolean to enable static unordered list instead scroling ticker
 
 Example:
-`[stock_ticker symbols="IBM,CSCO,AAPL,HPQ" show="symbol" zero="#000" minus="#f00" plus="#0f0"]`
+
+* Scrolling ticker
+`[stock_ticker symbols="BABA,^DJI,EURGBP=X,LON:FFX" show="symbol" zero="#000" minus="#f00" plus="#0f0"]`
+* Static unordered list
+`[stock_ticker symbols="BABA,^DJI,EURGBP=X,LON:FFX" show="symbol" zero="#000" minus="#f00" plus="#0f0" static="1"]`
 
 == Installation ==
 
@@ -88,6 +94,11 @@ Add this to your template file (you also can add custom parameters for shortcode
 `<?php echo do_shortcode('[stock_ticker]'); ?>`
 
 == Changelog ==
+
+= 0.1.4.4 (20150110) =
+* Add: Option to display static stock ticker as unordered list instead scrolling ticker.
+* Fix: Same widget output because cached widget.
+* Fix: Prevent `No data` ticker by converting wrong encoded characters in Google feed to single-byte ISO-8859-1
 
 = 0.1.4.3 =
 * Fix: Add stock exchange code to symbol link to prevent mixing stocks like CVE:CXB instead ASX:CXB

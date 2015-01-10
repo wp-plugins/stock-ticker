@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy add customizable moving ticker tapes with stock information
-Version: 0.1.4.3
+Version: 0.1.4.4
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -135,7 +135,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
         /**
          * Ticker function for widget and shortcode
          */
-        public static function stock_ticker($symbols,$show,$zero,$minus,$plus)
+        public static function stock_ticker($symbols,$show,$zero,$minus,$plus,$static)
         {
             if ( !empty($symbols) )
             {
@@ -177,13 +177,15 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                     $response = wp_remote_get($exc_url, $wprga);
                     // get content from response
                     $data = wp_remote_retrieve_body( $response );
+                    // convert a string with ISO-8859-1 characters encoded with UTF-8 to single-byte ISO-8859-1
+                    $data = utf8_decode( $data );
                     // remove newlines from content
                     $data = str_replace( "\n", "", $data );
                     // remove // from content
-                    $data = str_replace('/', '', $data);
+                    $data = trim(str_replace('/', '', $data));
+
                     // decode data to JSON
                     $json = json_decode($data);
-
                     // now cache array for N minutes
                     if ( !defined('WPAU_STOCK_TICKER_CACHE_TIMEOUT') )
                     {
@@ -199,7 +201,8 @@ if(!class_exists('WPAU_STOCK_TICKER'))
 
                 // prepare ticker
                 $id = 'stock_ticker_'. substr(md5(mt_rand()),0,8);
-                $out = '<ul id="' .$id. '" class="stock_ticker">';
+                $class = ( ! empty($static) && $static == 1 ) ? ' static' : '';
+                $out = '<ul id="' .$id. '" class="stock_ticker' . $class . '">';
 
                 // process quotes
                 if(!empty($json) && !is_null($json[0]->id))
@@ -264,11 +267,14 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 else
                     self::$wpau_stock_ticker_css .= $css;
 
-                // append ticker ID
-                if ( is_null(self::$wpau_stock_ticker_ids) )
+                // append ticker ID for initializing scrolling tickers
+                // do not append if static is enabled for this isntance
+                if ( empty($static) && is_null(self::$wpau_stock_ticker_ids) ) {
                     self::$wpau_stock_ticker_ids = "#".$id;
-                else
+                }
+                else if ( empty($static) ) {
                     self::$wpau_stock_ticker_ids .= ",#".$id;
+                }
 
                 unset($q, $id, $css, $defaults, $legend);
 
@@ -289,10 +295,11 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 'show'    => $st_defaults['show'],
                 'zero'    => $st_defaults['zero'],
                 'minus'   => $st_defaults['minus'],
-                'plus'    => $st_defaults['plus']
+                'plus'    => $st_defaults['plus'],
+                'static'  => false
             ), $atts ) );
             if ( !empty($symbols) )
-                return self::stock_ticker($symbols,$show,$zero,$minus,$plus);
+                return self::stock_ticker($symbols,$show,$zero,$minus,$plus,$static);
         }
     } // END class WPAU_STOCK_TICKER
 } // END if(!class_exists('WPAU_STOCK_TICKER'))
