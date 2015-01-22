@@ -12,7 +12,7 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
             add_action('admin_init', array(&$this, 'admin_init'));
             add_action('admin_menu', array(&$this, 'add_menu'));
         } // END public function __construct
-        
+
         /**
          * hook into WP's admin_init action hook
          */
@@ -28,18 +28,18 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 
             // add general settings section
             add_settings_section(
-                'default_settings', 
-                __('Default Settings','wpaust'), 
-                array(&$this, 'settings_default_section_description'), 
+                'default_settings',
+                __('Default Settings','wpaust'),
+                array(&$this, 'settings_default_section_description'),
                 'wpau_stock_ticker'
             );
-            
+
             // add setting's fields
             add_settings_field(
-                'wpau_stock_ticker-symbols', 
-                __('Stock Symbols','wpaust'), 
-                array(&$this, 'settings_field_input_text'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-symbols',
+                __('Stock Symbols','wpaust'),
+                array(&$this, 'settings_field_input_text'),
+                'wpau_stock_ticker',
                 'default_settings',
                 array(
                     'field'       => "stock_ticker_defaults[symbols]",
@@ -49,10 +49,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                 )
             );
             add_settings_field(
-                'wpau_stock_ticker-show', 
-                __('Show Company as','wpaust'), 
-                array(&$this, 'settings_field_select'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-show',
+                __('Show Company as','wpaust'),
+                array(&$this, 'settings_field_select'),
+                'wpau_stock_ticker',
                 'default_settings',
                 array(
                     'field'       => "stock_ticker_defaults[show]",
@@ -66,10 +66,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
             );
             // Color pickers
             add_settings_field( // unchanged
-                'wpau_stock_ticker-quote_zero', 
-                __('Unchanged Quote','wpaust'), 
-                array(&$this, 'settings_field_colour_picker'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-quote_zero',
+                __('Unchanged Quote','wpaust'),
+                array(&$this, 'settings_field_colour_picker'),
+                'wpau_stock_ticker',
                 'default_settings',
                 array(
                     'field'       => "stock_ticker_defaults[zero]",
@@ -78,10 +78,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                 )
             );
             add_settings_field( // minus
-                'wpau_stock_ticker-quote_minus', 
-                __('Netagive Change','wpaust'), 
-                array(&$this, 'settings_field_colour_picker'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-quote_minus',
+                __('Netagive Change','wpaust'),
+                array(&$this, 'settings_field_colour_picker'),
+                'wpau_stock_ticker',
                 'default_settings',
                 array(
                     'field'       => "stock_ticker_defaults[minus]",
@@ -90,10 +90,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                 )
             );
             add_settings_field( // plus
-                'wpau_stock_ticker-quote_plus', 
-                __('Positive Change','wpaust'), 
-                array(&$this, 'settings_field_colour_picker'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-quote_plus',
+                __('Positive Change','wpaust'),
+                array(&$this, 'settings_field_colour_picker'),
+                'wpau_stock_ticker',
                 'default_settings',
                 array(
                     'field'       => "stock_ticker_defaults[plus]",
@@ -104,33 +104,33 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 
             // add advanced settings section
             add_settings_section(
-                'advanced_settings', 
-                __('Advanced Settings','wpaust'), 
-                array(&$this, 'settings_advanced_section_description'), 
+                'advanced_settings',
+                __('Advanced Settings','wpaust'),
+                array(&$this, 'settings_advanced_section_description'),
                 'wpau_stock_ticker'
             );
             // add setting's fields
             // custom name
             add_settings_field(
-                'wpau_stock_ticker-legend', 
-                __('Custom Names','wpaust'), 
-                array(&$this, 'settings_field_textarea'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-legend',
+                __('Custom Names','wpaust'),
+                array(&$this, 'settings_field_textarea'),
+                'wpau_stock_ticker',
                 'advanced_settings',
                 array(
                     'field'       => "stock_ticker_defaults[legend]",
                     'class'       => 'widefat',
                     'value'       => $defaults['legend'],
-                    'description' => __('Define custom names for symbols. Single symbol per row in format SYMBOL;CUSTOM_NAME','wpaust')
+                    'description' => __('Define custom names for symbols. Single symbol per row in format EXCHANGE:SYMBOL;CUSTOM_NAME','wpaust')
                 )
             );
             // enable custom name usage
             /*
             add_settings_field(
-                'wpau_stock_ticker-custom', 
-                __('Use Custom Names','wpaust'), 
-                array(&$this, 'settings_field_checkbox'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-custom',
+                __('Use Custom Names','wpaust'),
+                array(&$this, 'settings_field_checkbox'),
+                'wpau_stock_ticker',
                 'advanced_settings',
                 array(
                     'field'       => "stock_ticker_defaults[custom]",
@@ -142,10 +142,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
             */
             // caching timeout field
             add_settings_field(
-                'wpau_stock_ticker-cache_timeout', 
-                __('Cache Timeout','wpaust'), 
-                array(&$this, 'settings_field_input_text'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-cache_timeout',
+                __('Cache Timeout','wpaust'),
+                array(&$this, 'settings_field_input_text'),
+                'wpau_stock_ticker',
                 'advanced_settings',
                 array(
                     'field'       => "stock_ticker_defaults[cache_timeout]",
@@ -156,10 +156,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
             );
             // default error message
             add_settings_field(
-                'wpau_stock_ticker-error_message', 
-                __('Error Message','wpaust'), 
-                array(&$this, 'settings_field_input_text'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-error_message',
+                __('Error Message','wpaust'),
+                array(&$this, 'settings_field_input_text'),
+                'wpau_stock_ticker',
                 'advanced_settings',
                 array(
                     'field'       => "stock_ticker_defaults[error_message]",
@@ -171,10 +171,10 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 
             // default styling
             add_settings_field(
-                'wpau_stock_ticker-style', 
-                __('Custom Style','wpaust'), 
-                array(&$this, 'settings_field_textarea'), 
-                'wpau_stock_ticker', 
+                'wpau_stock_ticker-style',
+                __('Custom Style','wpaust'),
+                array(&$this, 'settings_field_textarea'),
+                'wpau_stock_ticker',
                 'advanced_settings',
                 array(
                     'field'       => "stock_ticker_defaults[style]",
@@ -186,7 +186,7 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
             );
             // Possibly do additional admin_init tasks
         } // END public static function admin_init()
-        
+
         public function settings_default_section_description()
         {
             // Think of this as help text for the section.
@@ -197,7 +197,7 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
             // Think of this as help text for the section.
             echo __('Set advanced options important for caching quote feeds.','wpaust');
         }
-        
+
         /**
          * This function provides text inputs for settings fields
          */
@@ -253,29 +253,29 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
 
         /**
          * add a menu
-         */        
+         */
         public function add_menu()
         {
             // Add a page to manage this plugin's settings
             add_options_page(
-                __('Stock Ticker Settings','wpaust'), 
-                __('Stock Ticker','wpaust'), 
-                'manage_options', 
-                'wpau_stock_ticker', 
+                __('Stock Ticker Settings','wpaust'),
+                __('Stock Ticker','wpaust'),
+                'manage_options',
+                'wpau_stock_ticker',
                 array(&$this, 'plugin_settings_page')
             );
         } // END public function add_menu()
-    
+
         /**
          * Menu Callback
-         */        
+         */
         public function plugin_settings_page()
         {
             if(!current_user_can('manage_options'))
             {
                 wp_die(__('You do not have sufficient permissions to access this page.'));
             }
-    
+
             // Render the settings template
             include(sprintf("%s/../templates/settings.php", dirname(__FILE__)));
         } // END public function plugin_settings_page()

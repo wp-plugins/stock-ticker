@@ -95,6 +95,9 @@ Add this to your template file (you also can add custom parameters for shortcode
 
 == Changelog ==
 
+= 0.1.4.5 (20150122) =
+* Add: Support for custom company names in format EXCHANGE:SYMBOL
+
 = 0.1.4.4 (20150110) =
 * Add: Option to display static stock ticker as unordered list instead scrolling ticker.
 * Fix: Same widget output because cached widget.

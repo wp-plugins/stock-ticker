@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy add customizable moving ticker tapes with stock information
-Version: 0.1.4.4
+Version: 0.1.4.5
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -75,7 +75,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
          */
         public function __construct()
         {
-            define('WPAU_STOCK_TICKER_VER','0.1.4.3');
+            define('WPAU_STOCK_TICKER_VER','0.1.4.5');
 
             // Initialize Settings
             require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
@@ -225,14 +225,20 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                         else { $chclass = "zero"; $q_change = "0.00"; }
 
                         // Get custom company name if exists
-                        if ( !empty($legend[$q_symbol]) )
-                            $q_name = $legend[$q_symbol];
+                        if ( ! empty($legend[ $q_exch.':'.$q_symbol ]) ) {
+                            // first in format EXCHANGE:SYMBOL
+                            $q_name = $legend[ $q_exch.':'.$q_symbol ];
+                        } else if ( ! empty($legend[$q_symbol]) ) {
+                            // then in format SYMBOL
+                            $q_name = $legend[ $q_symbol ];
+                        }
 
                         // What to show: Symbol or Company Name?
-                        if ( $show == "name" )
+                        if ( $show == "name" ) {
                             $company_show = $q_name;
-                        else
+                        } else {
                             $company_show = $q_symbol;
+                        }
 
                         // Do not print change, volume and change% for currencies
                         if ($q_exch == "CURRENCY")
@@ -249,7 +255,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                     }
                 }
                 // No results were returned
-                if(empty($q))
+                if( empty($q) )
                     $q = '<li class="error">'.$defaults['error_message'].'</li>';
 
                 $out .= $q;
