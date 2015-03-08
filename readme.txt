@@ -98,6 +98,9 @@ Add this to your template file (you also can add custom parameters for shortcode
 
 == Changelog ==
 
+= 0.1.4.6 (20150308) =
+* Add: (20150308) Set UL container padding to 0 (to avoid cut-off in some themes)
+
 = 0.1.4.5 (20150308) =
 * Fix: (20150308) Custom quote colours in static block
 * Fix: (20150218) Set exact name of class to get class vars
