@@ -3,8 +3,8 @@ Contributors: urkekg
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q6Q762MQ97XJ6
 Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
-Tested up to: 4.1
-Stable tag: 0.1.4.4
+Tested up to: 4.2
+Stable tag: 0.1.4.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -38,13 +38,16 @@ You can tune single shortcode with parameters:
 * `minus` - string with HEX colour value of negative quote change
 * `plus` - string with HEX colour value of positive quote change
 * `static` - boolean to enable static unordered list instead scroling ticker
+* `nolink` - disable links for single quotes
 
-Example:
+= Example =
 
 * Scrolling ticker
 `[stock_ticker symbols="BABA,^DJI,EURGBP=X,LON:FFX" show="symbol" zero="#000" minus="#f00" plus="#0f0"]`
 * Static unordered list
 `[stock_ticker symbols="BABA,^DJI,EURGBP=X,LON:FFX" show="symbol" zero="#000" minus="#f00" plus="#0f0" static="1"]`
+* Scrolling ticker w/o linked quotes
+`[stock_ticker symbols="BABA,^DJI,EURGBP=X,LON:FFX" show="symbol" zero="#000" minus="#f00" plus="#0f0" nolink="1"]`
 
 == Installation ==
 
@@ -95,8 +98,14 @@ Add this to your template file (you also can add custom parameters for shortcode
 
 == Changelog ==
 
-= 0.1.4.5 (20150122) =
-* Add: Support for custom company names in format EXCHANGE:SYMBOL
+= 0.1.4.5 (20150308) =
+* Fix: (20150308) Custom quote colours in static block
+* Fix: (20150218) Set exact name of class to get class vars
+* Add: (20150308) Option to disable link to Google Finance on each stock quote.
+* Add: (20150122) Support for custom company names in format EXCHANGE:SYMBOL
+* Add: (20150308) Non-minified webticker jQuery library
+* Improve: (20150308) Ticker style LESS
+* Test: (20150308) on WordPress 4.2-alpha-31677 and Twenty Fifteen
 
 = 0.1.4.4 (20150110) =
 * Add: Option to display static stock ticker as unordered list instead scrolling ticker.

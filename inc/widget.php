@@ -53,6 +53,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         $minus   = $instance['minus'];
         $plus    = $instance['plus'];
         $static  = empty($instance['static']) ? '0' : '1';
+        $nolink  = empty($instance['nolink']) ? '0' : '1';
 
         // output live stock ticker widget
         echo $args['before_widget'];
@@ -60,7 +61,7 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         if ( ! empty( $title ) )
             echo $args['before_title'] . $title . $args['after_title'];
 
-        echo WPAU_STOCK_TICKER::stock_ticker($symbols,$show,$zero,$minus,$plus,$static);
+        echo WPAU_STOCK_TICKER::stock_ticker($symbols, $show, $zero, $minus, $plus, $static, $nolink);
 
         echo $args['after_widget'];
 
@@ -125,6 +126,11 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         else
             $static = '0';
 
+        if ( isset( $instance[ 'nolink' ] ) )
+            $nolink = $instance[ 'nolink' ];
+        else
+            $nolink = '0';
+
         ?>
         <p>
         <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title' ); ?>:</label>
@@ -159,6 +165,11 @@ class WPAU_Stock_Ticker_Widget extends WP_Widget
         <label for="<?php echo $this->get_field_id( 'static' ); ?>">
         <input class="checkbox" id="<?php echo $this->get_field_id( 'static' ); ?>" name="<?php echo $this->get_field_name( 'static' ); ?>" type="checkbox" value="1" <?php checked($static, true, true); ?>" />
         <?php _e( 'Make this ticker static (disable scrolling)','wpaust' ); ?>
+        </label>
+        <br />
+        <label for="<?php echo $this->get_field_id( 'nolink' ); ?>">
+        <input class="checkbox" id="<?php echo $this->get_field_id( 'nolink' ); ?>" name="<?php echo $this->get_field_name( 'nolink' ); ?>" type="checkbox" value="1" <?php checked($nolink, true, true); ?>" />
+        <?php _e( 'Do not link quotes','wpaust' ); ?>
         </label>
         </p>
 
@@ -205,6 +216,7 @@ jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
         $instance['minus']   = ( ! empty( $new_instance['minus'] ) ) ? strip_tags( $new_instance['minus'] ) : '';
         $instance['plus']    = ( ! empty( $new_instance['plus'] ) ) ? strip_tags( $new_instance['plus'] ) : '';
         $instance['static']  = ( ! empty( $new_instance['static'] ) ) ? '1' : '0';
+        $instance['nolink']  = ( ! empty( $new_instance['nolink'] ) ) ? '1' : '0';
 
         return $instance;
     }

@@ -9,7 +9,7 @@ Author URI: http://urosevic.net
 License: GNU GPL3
 */
 /*
-Copyright 2014 Aleksandar Urosevic (urke.kg@gmail.com)
+Copyright 2014-2015 Aleksandar Urosevic (urke.kg@gmail.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -73,8 +73,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
         /**
          * Construct the plugin object
          */
-        public function __construct()
-        {
+        public function __construct() {
             define('WPAU_STOCK_TICKER_VER','0.1.4.5');
 
             // Initialize Settings
@@ -83,13 +82,12 @@ if(!class_exists('WPAU_STOCK_TICKER'))
             require_once(sprintf("%s/inc/widget.php", dirname(__FILE__)));
 
             $WPAU_Stock_Ticker_Settings = new WPAU_Stock_Ticker_Settings();
-        } // END public function __construct
+        } // END public function __construct()
 
         /**
          * Defaults
          */
-        public static function defaults()
-        {
+        public static function defaults() {
             $defaults = array(
                 'symbols'       => 'AAPL,MSFT,INTC',
                 'show'          => 'name',
@@ -103,13 +101,12 @@ if(!class_exists('WPAU_STOCK_TICKER'))
             );
             $options = wp_parse_args(get_option('stock_ticker_defaults'), $defaults);
             return $options;
-        }
+        } // END public static function defaults()
 
         /**
          * Activate the plugin
          */
-        public static function activate()
-        {
+        public static function activate() {
             // Transit old settings to new format
             $defaults = self::defaults();
             if ( get_option('st_symbols') )
@@ -121,22 +118,21 @@ if(!class_exists('WPAU_STOCK_TICKER'))
             if ( get_option('st_quote_zero') ) { $defaults['zero'] = get_option('st_quote_zero'); delete_option('st_quote_zero'); }
             if ( get_option('st_quote_minus') ) { $defaults['minus'] = get_option('st_quote_minus'); delete_option('st_quote_minus'); }
             if ( get_option('st_quote_plus') ) { $defaults['plus'] = get_option('st_quote_plus'); delete_option('st_quote_plus'); }
-            update_option('stock_ticker_defaults',$defaults);
-        } // END public static function activate
+            update_option('stock_ticker_defaults', $defaults);
+        } // END public static function activate()
 
         /**
          * Deactivate the plugin
          */
-        public static function deactivate()
-        {
+        public static function deactivate() {
             // Do nothing
-        } // END public static function deactivate
+        } // END public static function deactivate()
 
         /**
          * Ticker function for widget and shortcode
          */
-        public static function stock_ticker($symbols,$show,$zero,$minus,$plus,$static)
-        {
+        public static function stock_ticker($symbols, $show, $zero, $minus, $plus, $static, $nolink) {
+
             if ( !empty($symbols) )
             {
                 // get fresh or from transient cache stock quote
@@ -205,12 +201,15 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 $out = '<ul id="' .$id. '" class="stock_ticker' . $class . '">';
 
                 // process quotes
-                if(!empty($json) && !is_null($json[0]->id))
+                if( ! empty($json) && ! is_null($json[0]->id) )
                 {
+                    // start ticker string
                     $q = "";
+
                     // Parse results and extract data to display
                     foreach($json as $quote)
                     {
+                        // assign object elements to vars
                         $q_change  = $quote->c;
                         $q_price   = $quote->l;
                         $q_name    = $quote->t;
@@ -239,21 +238,32 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                         } else {
                             $company_show = $q_symbol;
                         }
+                        // open stock quote item
+                        $q .= '<li class="'.$chclass.'">';
 
                         // Do not print change, volume and change% for currencies
-                        if ($q_exch == "CURRENCY")
-                        {
-                            if ( $q_symbol == $q_name )
-                            {
-                                $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.'=X '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
-                            } else {
-                                $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_symbol.'" target="_blank" title="'.$q_name.'">'.$q_name.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
-                            }
+                        if ($q_exch == "CURRENCY") {
+                            $company_show = ( $q_symbol == $q_name ) ? $q_name . '=X' : $q_name;
+                            $url_query = $q_symbol;
+                            $quote_title = $q_name;
                         } else {
-                            $q .= '<li class="'.$chclass.'"><a href="https://www.google.com/finance?q='.$q_exch.':'.$q_symbol.'" target="_blank" title="'.$q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a></li>';
+                            $url_query = $q_exch.':'.$q_symbol;
+                            $quote_title = $q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')';
                         }
+
+                        // quote w/ or w/o link
+                        if ( empty($nolink) ) {
+                            $q .= '<a href="https://www.google.com/finance?q='.$url_query.'" class="sqitem" target="_blank" title="'.$quote_title.'">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a>';
+                        } else {
+                            $q .= '<span class="sqitem" title="'.$quote_title.'">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</span>';
+                        }
+
+                        // close stock quote item
+                        $q .= '</li>';
+
                     }
                 }
+
                 // No results were returned
                 if( empty($q) )
                     $q = '<li class="error">'.$defaults['error_message'].'</li>';
@@ -263,13 +273,13 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 $out .= '</ul>';
 
                 // prepare styles
-                $css = "ul#{$id}.stock_ticker li.zero a,ul#{$id}.stock_ticker li.zero a:hover { color: $zero; }";
-                $css .= "ul#{$id}.stock_ticker li.minus a,ul#{$id}.stock_ticker li.minus a:hover { color: $minus; }";
-                $css .= "ul#{$id}.stock_ticker li.plus a,ul#{$id}.stock_ticker li.plus a:hover { color: $plus; }";
+                $css = "ul#{$id}.stock_ticker li.zero .sqitem,ul#{$id}.stock_ticker li.zero .sqitem:hover { color: $zero; }";
+                $css .= "ul#{$id}.stock_ticker li.minus .sqitem,ul#{$id}.stock_ticker li.minus .sqitem:hover { color: $minus; }";
+                $css .= "ul#{$id}.stock_ticker li.plus .sqitem,ul#{$id}.stock_ticker li.plus .sqitem:hover { color: $plus; }";
 
                 // append customized styles
                 if ( is_null(self::$wpau_stock_ticker_css) )
-                    self::$wpau_stock_ticker_css = ( empty($defaults['style']) ) ? $css : "ul.stock_ticker li a{".$defaults['style']."}$css";
+                    self::$wpau_stock_ticker_css = ( empty($defaults['style']) ) ? $css : "ul.stock_ticker li .sqitem{".$defaults['style']."}$css";
                 else
                     self::$wpau_stock_ticker_css .= $css;
 
@@ -288,13 +298,13 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 return $out;
 
             }
-        }
+        } // END public static function stock_ticker()
 
         /**
          * Shortcode for stock ticker
          */
-        public static function stock_ticker_shortcode($atts,$content=null)
-        {
+        public static function stock_ticker_shortcode($atts, $content=null) {
+
             $st_defaults = WPAU_STOCK_TICKER::defaults();
             extract( shortcode_atts( array(
                 'symbols' => $st_defaults['symbols'],
@@ -302,16 +312,22 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 'zero'    => $st_defaults['zero'],
                 'minus'   => $st_defaults['minus'],
                 'plus'    => $st_defaults['plus'],
-                'static'  => false
+                'static'  => false,
+                'nolink'  => false
             ), $atts ) );
+
             if ( !empty($symbols) )
-                return self::stock_ticker($symbols,$show,$zero,$minus,$plus,$static);
-        }
+                return self::stock_ticker($symbols, $show, $zero, $minus, $plus, $static, $nolink);
+
+        } // END public static function stock_ticker_shortcode()
+
     } // END class WPAU_STOCK_TICKER
+
 } // END if(!class_exists('WPAU_STOCK_TICKER'))
 
 if(class_exists('WPAU_STOCK_TICKER'))
 {
+
     // Installation and uninstallation hooks
     register_activation_hook(__FILE__, array('WPAU_STOCK_TICKER', 'activate'));
     register_deactivation_hook(__FILE__, array('WPAU_STOCK_TICKER', 'deactivate'));
@@ -323,12 +339,11 @@ if(class_exists('WPAU_STOCK_TICKER'))
     if(isset($wpau_stock_ticker))
     {
         // Add the settings link to the plugins page
-        function plugin_settings_link($links)
-        {
+        function plugin_settings_link($links) {
             $settings_link = '<a href="options-general.php?page=wpau_stock_ticker">Settings</a>';
             array_unshift($links, $settings_link);
             return $links;
-        }
+        } // eof plugin_settings_link()
 
         $plugin = plugin_basename(__FILE__);
         add_filter("plugin_action_links_$plugin", 'plugin_settings_link');
@@ -336,36 +351,42 @@ if(class_exists('WPAU_STOCK_TICKER'))
         /**
          * Enqueue the colour picker
          */
-        function wpau_enqueue_colour_picker()
-        {
+        function wpau_enqueue_colour_picker() {
             wp_enqueue_style( 'wp-color-picker' );
             wp_enqueue_script( 'wp-color-picker' );
-        }
+        } // END function wpau_enqueue_colour_picker()
         add_action( 'admin_enqueue_scripts', 'wpau_enqueue_colour_picker' );
 
         // JS tool for frontend
-        function wpau_stock_ticker_js()
-        {
+        function wpau_stock_ticker_js() {
             wp_enqueue_script( 'jquery-ticker', plugin_dir_url(__FILE__) . 'assets/js/jquery.webticker.min.js', array('jquery'), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
             wp_enqueue_style( 'stock-ticker', plugin_dir_url(__FILE__) .'assets/css/stock-ticker.css', array(), WPAU_STOCK_TICKER_VER ); //'1.0.0' );
-        }
+        } // END function wpau_stock_ticker_js()
         add_action( 'wp_enqueue_scripts', 'wpau_stock_ticker_js' );
 
-        function wpau_stock_ticker_byshortcode()
-        {
-            global $wpau_stock_ticker;
-            // make it to work with PHP <5.3
+        /**
+         * Output jQuery for animated tickers and prepared custom styling
+         * @return string SCRIPT and STYLE in page footer
+         */
+        function wpau_stock_ticker_byshortcode() {
+
+            // get class vars
             $ticker_class_vars = get_class_vars('wpau_stock_ticker');
-            if ( !is_null($ticker_class_vars['wpau_stock_ticker_ids']) )
-            {
+
+            // output script for animated tickers
+            if ( ! is_null($ticker_class_vars['wpau_stock_ticker_ids']) )
                 echo "<script type=\"text/javascript\">jQuery(document).ready(function(){jQuery(\"".$ticker_class_vars['wpau_stock_ticker_ids']."\").webTicker();});</script>";
-                if ( !empty($ticker_class_vars['wpau_stock_ticker_css']) )
-                    echo "<style type=\"text/css\">".$ticker_class_vars['wpau_stock_ticker_css']."</style>";
-            }
-        }
+
+            // output custom styles
+            if ( !empty($ticker_class_vars['wpau_stock_ticker_css']) )
+                echo "<style type=\"text/css\">".$ticker_class_vars['wpau_stock_ticker_css']."</style>";
+
+        } // END function wpau_stock_ticker_byshortcode()
         add_action( 'wp_footer', 'wpau_stock_ticker_byshortcode' );
 
         // register stock_ticker shortcode
         add_shortcode( 'stock_ticker', array('WPAU_STOCK_TICKER','stock_ticker_shortcode') );
-    }
-}
+
+    } // END isset($wpau_stock_ticker)
+
+} // END class_exists('WPAU_STOCK_TICKER')

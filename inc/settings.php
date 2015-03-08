@@ -124,22 +124,6 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                     'description' => __('Define custom names for symbols. Single symbol per row in format EXCHANGE:SYMBOL;CUSTOM_NAME','wpaust')
                 )
             );
-            // enable custom name usage
-            /*
-            add_settings_field(
-                'wpau_stock_ticker-custom',
-                __('Use Custom Names','wpaust'),
-                array(&$this, 'settings_field_checkbox'),
-                'wpau_stock_ticker',
-                'advanced_settings',
-                array(
-                    'field'       => "stock_ticker_defaults[custom]",
-                    'class'       => 'widefat',
-                    'value'       => $defaults['custom'],
-                    'description' => __('Use defined Custom Names instead default Yahoo Finance names','wpaust')
-                )
-            );
-            */
             // caching timeout field
             add_settings_field(
                 'wpau_stock_ticker-cache_timeout',
