@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
 Tested up to: 4.2
-Stable tag: 0.1.4.5
+Stable tag: 0.1.4.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -96,9 +96,18 @@ Add this to your template file (you also can add custom parameters for shortcode
 
 `<?php echo do_shortcode('[stock_ticker]'); ?>`
 
+= Stock Ticker does not work with ION .com Insider plugin =
+
+Trend Analysis WordPress Plugin ION.com Insider mess with content and change shortcode parameters before WordPress process shortcodes.
+
+To avoid this, use Stock Ticker 0.1.4.6 or newer, and use in shortcodes single instead double quotes for parameters. Example:
+
+`[stock_ticker symbols='BABA,^DJI,EURGBP=X,LON:FFX']`
+
 == Changelog ==
 
-= 0.1.4.6 (20150308) =
+= 0.1.4.6 (20150331) =
+* Add: (20150331) Strip HTML tags from shortcode symbol parameter
 * Add: (20150308) Set UL container padding to 0 (to avoid cut-off in some themes)
 
 = 0.1.4.5 (20150308) =
