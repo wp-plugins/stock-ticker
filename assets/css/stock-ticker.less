@@ -1,0 +1,79 @@
+.stock_ticker,
+.tickeroverlay-left,
+.tickeroverlay-right {
+    display: none;
+}
+.stock_ticker.static {
+    display: block;
+}
+.widget ul.stock_ticker {
+    margin-bottom: 0;
+    padding: 0;
+}
+ul.stock_ticker {
+
+    & li>.sqitem:before {
+        content: "";
+    }
+    & .plus>.sqitem:before {
+        content: url(../img/up_g.gif);
+        margin-right: 2px;
+    }
+    & .minus>.sqitem:before {
+        content: url(../img/down_r.gif);
+        margin-right: 2px;
+    }
+}
+.tickercontainer {
+    width: 100%;
+    min-height: 20px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    & .mask {
+        position: relative;
+        top: 0;
+        min-height: 20px;
+        line-height: 20px;
+        overflow: hidden;
+    }
+}
+ul.newsticker,
+.tickercontainer ul {
+    -webkit-transition: all 0s linear;
+    -moz-transition: all 0s linear;
+    -o-transition: all 0s linear;
+    transition: all 0s linear;
+    position: relative;
+    margin-left: 10px;
+    list-style-type: none;
+    max-height: 20px;
+    margin: 0;
+    padding: 0;
+    float: left;
+    overflow: hidden;
+    display: block;
+}
+ul.newsticker {
+    & li {
+        float: left;
+        margin: 0;
+        padding: 0 20px 0 0;
+        display: block;
+        min-height: 20px;
+    }
+    & .sqitem {
+        white-space: nowrap;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        height: 20px;
+        line-height: 20px;
+        text-decoration: none;
+    }
+    & span {
+        margin: 0 10px 0 0;
+    }
+}
