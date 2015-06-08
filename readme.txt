@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
 Tested up to: 4.2
-Stable tag: 0.1.4.7
+Stable tag: 0.1.4.8
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,6 +146,9 @@ data licensors endorses or is responsible for the content of any advertisement
 or any goods or services offered therein.
 
 == Changelog ==
+
+= 0.1.4.8 (20150607) =
+* Fix: Make available to work with our Stock Quote plugin
 
 = 0.1.4.7 (20150415) =
 * Add: Google Disclaimer to Settings page and README file (Other Notes)
