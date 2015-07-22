@@ -3,8 +3,8 @@ Contributors: urkekg
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Q6Q762MQ97XJ6
 Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
-Tested up to: 4.2
-Stable tag: 0.1.4.8
+Tested up to: 4.3
+Stable tag: 0.1.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -24,8 +24,17 @@ Stock Ticker is enhanced animated variation of [Stock Quote](https://wordpress.o
 * Both, global and widget settings provides easy colour picker for selecting all three colour values
 * Tooltip for ticker item display company name, exchange and last trade date/time
 * Define custom names for companies to be used instead symbols
+* Define custom elements in visible change value
 * Plugin uses native WordPress function to get and cache data from Google Finance for predefined duration of time
 * Ready to be translated to non-english languages
+
+Since version 0.1.5 you can set custom template for visible change value. Default format is `%company% %price% %change% %changep%`, and as a macro keywords you can use:
+* `%exch_symbol%` - Symbol with exchange, like *NASDAQ:AAPL*
+* `%symbol%` - Company symbol, like *AAPL*
+* `%company%` - Company name after filtered by custom names, like *Apple Inc.*
+* `%price%` - Price value, like *125.22*
+* `%change%` - Change value, like *-5.53*
+* `%changep%` - Change percentage, like *-4.23%*
 
 For feature requests or help [send feedback](http://urosevic.net/wordpress/plugins/stock-ticker/ "Official plugin page") or use support forum on WordPress.
 
@@ -146,6 +155,9 @@ data licensors endorses or is responsible for the content of any advertisement
 or any goods or services offered therein.
 
 == Changelog ==
+
+= 0.1.5 (20150723) =
+* Add: Option to set custom template for visible change value (global plugin settings)
 
 = 0.1.4.8 (20150607) =
 * Fix: Make available to work with our Stock Quote plugin

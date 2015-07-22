@@ -3,7 +3,7 @@
 Plugin Name: Stock Ticker
 Plugin URI: http://urosevic.net/wordpress/plugins/stock-ticker/
 Description: Easy add customizable moving ticker tapes with stock information
-Version: 0.1.4.8
+Version: 0.1.5
 Author: Aleksandar Urosevic
 Author URI: http://urosevic.net
 License: GNU GPL3
@@ -74,7 +74,7 @@ if(!class_exists('WPAU_STOCK_TICKER'))
          * Construct the plugin object
          */
         public function __construct() {
-            define('WPAU_STOCK_TICKER_VER','0.1.4.8');
+            define('WPAU_STOCK_TICKER_VER','0.1.5');
 
             // Initialize Settings
             require_once(sprintf("%s/inc/settings.php", dirname(__FILE__)));
@@ -97,7 +97,8 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                 'cache_timeout' => '180', // 3 minutes
                 'error_message' => 'Unfortunately, we could not get stock quotes this time.',
                 'legend'        => "AAPL;Apple Inc.\nFB;Facebook, Inc.\nCSCO;Cisco Systems, Inc.\nGOOG;Google Inc.\nINTC;Intel Corporation\nLNKD;LinkedIn Corporation\nMSFT;Microsoft Corporation\nTWTR;Twitter, Inc.\nBABA;Alibaba Group Holding Limited\nIBM;International Business Machines Corporation\n.DJI;Dow Jones Industrial Average\nEURGBP;Euro (€) ⇨ British Pound Sterling (£)",
-                'style'         => 'font-family: "Open Sans", Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px;'
+                'style'         => 'font-family: "Open Sans", Helvetica, Arial, sans-serif; font-weight: normal; font-size: 14px;',
+                'template'      => '%company% %price% %change% %changep%' // $company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%
             );
             $options = wp_parse_args(get_option('stock_ticker_defaults'), $defaults);
             return $options;
@@ -133,11 +134,11 @@ if(!class_exists('WPAU_STOCK_TICKER'))
          */
         public static function stock_ticker($symbols, $show, $zero, $minus, $plus, $static, $nolink) {
 
-            if ( !empty($symbols) )
+            if ( ! empty($symbols) )
             {
 
                 // get fresh or from transient cache stock quote
-                $st_transient_id = "st_json_".md5($symbols);
+                $st_transient_id = "st_json_" . md5($symbols);
 
                 // get legend for company names
                 $defaults = self::defaults();
@@ -252,11 +253,22 @@ if(!class_exists('WPAU_STOCK_TICKER'))
                             $quote_title = $q_name.' ('.$q_exch.' Last trade '.$q_ltrade.')';
                         }
 
+                        // value template
+                        $template = $defaults['template'];
+                        $template = str_replace('%company%', $company_show, $template);
+                        $template = str_replace('%symbol%', $q_symbol, $template);
+                        $template = str_replace('%exch_symbol%', $url_query, $template);
+                        $template = str_replace('%price%', $q_price, $template);
+                        $template = str_replace('%change%', $q_change, $template);
+                        $template = str_replace('%changep%', "{$q_changep}%", $template);
+
                         // quote w/ or w/o link
                         if ( empty($nolink) ) {
-                            $q .= '<a href="https://www.google.com/finance?q='.$url_query.'" class="sqitem" target="_blank" title="'.$quote_title.'">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a>';
+                            $q .= '<a href="https://www.google.com/finance?q='.$url_query.'" class="sqitem" target="_blank" title="'.$quote_title.'">'.$template.'</a>';
+                            // $q .= '<a href="https://www.google.com/finance?q='.$url_query.'" class="sqitem" target="_blank" title="'.$quote_title.'">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</a>';
                         } else {
-                            $q .= '<span class="sqitem" title="'.$quote_title.'">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</span>';
+                            $q .= '<span class="sqitem" title="'.$quote_title.'">'.$template.'</span>';
+                            // $q .= '<span class="sqitem" title="'.$quote_title.'">'.$company_show.' '.$q_price.' '.$q_change.' '.$q_changep.'%</span>';
                         }
 
                         // close stock quote item

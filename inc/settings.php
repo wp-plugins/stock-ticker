@@ -110,6 +110,20 @@ if(!class_exists('WPAU_STOCK_TICKER_SETTINGS'))
                 'wpau_stock_ticker'
             );
             // add setting's fields
+            // default error message
+            add_settings_field(
+                'wpau_stock_ticker-template',
+                __('value template','wpaust'),
+                array(&$this, 'settings_field_input_text'),
+                'wpau_stock_ticker',
+                'advanced_settings',
+                array(
+                    'field'       => "stock_ticker_defaults[template]",
+                    'description' => __('Custom template for value. You can use %exch_symbol%, %symbol%, %company%, %price%, %change%, %changep%','wpaust'),
+                    'class'       => 'widefat',
+                    'value'       => $defaults['template'],
+                )
+            );
             // custom name
             add_settings_field(
                 'wpau_stock_ticker-legend',
