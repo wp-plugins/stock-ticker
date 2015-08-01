@@ -226,9 +226,6 @@ jQuery('#widgets-right .widgets-sortables').on('sortstop', function(event,ui){
 // register widget
 function stock_ticker_init()
 {
-    if (version_compare(PHP_VERSION, '5.3.0') > 0)
-        register_widget( 'WPAU_Stock_Ticker_Widget' );
-    else
-        create_function('', 'return register_widget("WPAU_Stock_Ticker_Widget");');
+    register_widget( 'WPAU_Stock_Ticker_Widget' );
 }
 add_action( 'widgets_init', 'stock_ticker_init' );
