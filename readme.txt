@@ -115,6 +115,14 @@ To avoid this, use Stock Ticker 0.1.4.6 or newer, and use in shortcodes single i
 
 `[stock_ticker symbols='BABA,^DJI,EURGBP=X,LON:FFX']`
 
+= How to customize quote output? =
+
+On Settings page for plugin you can set custom Value template. You can use macro keywords `%exch_symbol%`, `%symbol%`, `%company%`, `%price%`, `%change%` and `%changep%` mixed with HTML tags `<span>`, `<em>` and/or `<strong>`.
+
+Default template is `%company% %price% %change% %changep%` but you can format it like:
+
+`<span style="color:#333">%company%</span> <em>%price%</em> <strong>%change%</strong> %changep%`
+
 == Disclaimer ==
 
 Data for Stock Ticker has provided by Google Finance and per their disclaimer, it can only be used at a noncommercial level. Please also note that Google has stated Finance API as deprecated and has no exact shutdown date.
@@ -155,6 +163,13 @@ data licensors endorses or is responsible for the content of any advertisement
 or any goods or services offered therein.
 
 == Changelog ==
+
+= 0.1.6 (20150804) =
+* Add: Settings values sanitization
+* Change: Value template on Settings page changed to textarea
+* Change: Timeout field on Settings page changed to HTML5 number field
+* Update FAQ
+* Update coding standard
 
 = 0.1.5.1 (20150801) =
 * Fix: Widget not initialized on PHP <5.3
