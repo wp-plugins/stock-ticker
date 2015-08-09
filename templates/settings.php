@@ -25,15 +25,15 @@
 <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 </form>
-	<p><?php printf( __( 'You also can use shortcode <code>%s</code> where:', 'wpaust' ), '[stock_ticker symbols="" show="" zero="" minus="" plus="" static="" nolink=""]' ); ?>
+	<p><?php printf( esc_attr__( 'You also can use shortcode %s where:', 'wpaust' ), '<code>[stock_ticker symbols="" show="" zero="" minus="" plus="" static="" nolink=""]</code>' ); ?>
 		<ul>
 			<li><code>symbols</code> <?php esc_attr_e( 'represent array of stock symbols (default from this settings page used if no custom set by shortcode)', 'wpaust' ); ?></li>
-			<li><code>show</code> <?php printf( __( 'can be <code>%s</code> to represent company with Company Name (default), or <code>%s</code> to represent company with Stock Symbol', 'wpaust' ), 'name', 'symbol' ); ?></li>
+			<li><code>show</code> <?php printf( esc_attr__( 'can be %s to represent company with Company Name (default), or %s to represent company with Stock Symbol', 'wpaust' ), '<code>name</code>', '<code>symbol</code>' ); ?></li>
 			<li><code>zero</code> <?php esc_attr_e( 'is HEX or RGBA colour for unchanged quote', 'wpaust' ); ?></li>
 			<li><code>minus</code> <?php esc_attr_e( 'is HEX or RGBA colour for negative change of quote', 'wpaust' ); ?></li>
 			<li><code>plus</code> <?php esc_attr_e( 'is HEX or RGBA colour for positive change of quote', 'wpaust' ); ?></li>
-			<li><code>static</code> <?php esc_attr_e( 'disables scrolling ticker and makes it static if set to <code>1</code> or <code>true</code>', 'wpaust' ); ?></li>
-			<li><code>nolink</code> <?php esc_attr_e( 'to disable link of quotes to Google Finance page set to <code>1</code> or <code>true</code>', 'wpaust' ); ?></li>
+			<li><code>static</code> <?php printf( esc_attr__( 'disables scrolling ticker and makes it static if set to %s or %s', 'wpaust' ), '<code>1</code>', '<code>true</code>' ); ?></li>
+			<li><code>nolink</code> <?php printf( esc_attr__( 'to disable link of quotes to Google Finance page set to %s or %s', 'wpaust' ), '<code>1</code>', '<code>true</code>' ); ?></li>
 		</ul>
 	</p>
 

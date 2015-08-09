@@ -4,11 +4,11 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: widget, stock, ticker, securities, quote, financial, finance, exchange, bank, market, trading, investment, stock symbols, stock quotes, forex, nasdaq, nyse, wall street
 Requires at least: 3.9.0
 Tested up to: 4.3
-Stable tag: 0.1.5.1
+Stable tag: 0.1.6
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Easy add customizable moving ticker tapes with stock information.
+Easy add customizable moving or static ticker tapes with stock information for custom stock symbols.
 
 == Description ==
 
@@ -80,18 +80,18 @@ Easy install Stock Ticker as any other ordinary WordPress plugin
 
 = How to know which stock symbols to use? =
 
-Visit [Yahoo Finance Stock Center](http://finance.yahoo.com/stock-center/) and look for preferred symbols that you need/wish to display on your site.
-For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple, Microsoft, IBM, Cisco, Google, Yahoo, Amazon)
+Visit [Google Finance](https://www.google.com/finance) and look for preferred symbols that you need/wish to display on your site.
+For start you can try with AAPL,MSFT,IBM,CSCO,GOOG,YHOO,AMZN (Apple Inc; Microsoft Corporation; International Business Machines Corporation; Cisco Systems, Inc.; Google Inc; Yahoo! Inc; Amazon.com, Inc.)
 
 = How to get Dow Jones Industrial Average? =
 
-Since version 1.4.0 we use Google Finance, that support ^DJI exchange. To get quote for this exchange, simply add symbol `.DJI` or `^DJI`.
+Since version 1.4.0 we use Google Finance, which support ^DJI exchange. To get quote for this exchange, simply add symbol `.DJI` or `^DJI`.
 
 = How to get currency exchange rate? =
 
 Use Currency symbols like `EURGBP=X` to get rate of `1 Euro` = `? British Pounds`
 
-= How to get descriptive title for currency exchange rates =
+= How to get descriptive title for currency exchange rates? =
 
 Add to `Custom Names` legend currency exchange symbol w/o `=X` part, like:
 
@@ -122,6 +122,10 @@ On Settings page for plugin you can set custom Value template. You can use macro
 Default template is `%company% %price% %change% %changep%` but you can format it like:
 
 `<span style="color:#333">%company%</span> <em>%price%</em> <strong>%change%</strong> %changep%`
+
+= I set to shod `%company%` but symbol is displayed instead =
+
+Please note that Google Finance does not provide company name in retrieved feeds. You'll need to set company name to Custom Names field on plugin settings page.
 
 == Disclaimer ==
 
@@ -166,10 +170,13 @@ or any goods or services offered therein.
 
 = 0.1.6 (20150804) =
 * Add: Settings values sanitization
+* Add: Link to community Support forum and Donate to plugin links in row on Plugins page
 * Change: Value template on Settings page changed to textarea
 * Change: Timeout field on Settings page changed to HTML5 number field
+* Change: Ticker ID length reduced fro 8 to 4 characters
+* Change: Move all core methods inside class
+* Make code fully compliant to WordPress Coding Standard
 * Update FAQ
-* Update coding standard
 
 = 0.1.5.1 (20150801) =
 * Fix: Widget not initialized on PHP <5.3

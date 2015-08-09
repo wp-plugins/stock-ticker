@@ -243,13 +243,13 @@ if ( ! class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ) ) {
 		 */
 		public function settings_field_input_text($args) {
 			extract( $args );
-			echo sprintf(
+			printf(
 				'<input type="text" name="%s" id="%s" value="%s" class="%s" /><p class="description">%s</p>',
-				$field,
-				$field,
-				$value,
-				$class,
-				$description
+				esc_attr( $field ),
+				esc_attr( $field ),
+				esc_attr( $value ),
+				sanitize_html_class( $class ),
+				esc_html( $description )
 			);
 		} // END public function settings_field_input_text($args)
 
@@ -260,36 +260,18 @@ if ( ! class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ) ) {
 		 */
 		public function settings_field_input_number($args) {
 			extract( $args );
-			echo sprintf(
+			printf(
 				'<input type="number" name="%1$s" id="%2$s" value="%3$s" min="%4$s" max="%5$s" step="%6$s" class="%7$s" /><p class="description">%8$s</p>',
-				$field,
-				$field,
-				$value,
-				$min,
-				$max,
-				$step,
-				$class,
-				$description
+				esc_attr( $field ),
+				esc_attr( $field ),
+				(int) $value,
+				(int) $min,
+				(int) $max,
+				(int) $step,
+				sanitize_html_class( $class ),
+				esc_html( $description )
 			);
 		} // END public function settings_field_input_number($args)
-
-		/**
-		 * This function provides checkbox for settings fields
-		 * @param  array $args Array of field arguments.
-		 */
-		public function settings_field_checkbox($args) {
-			extract( $args );
-			$checked = ( ! empty( $args['value'] ) ) ? 'checked="checked"' : '';
-			echo sprintf(
-				'<label for="%s"><input type="checkbox" name="%s" id="%s" value="1" class="%s" %s />%s</label>',
-				$field,
-				$field,
-				$field,
-				$class,
-				$checked,
-				$description
-			);
-		} // END public function settings_field_checkbox($args)
 
 		/**
 		 * This function provides textarea for settings fields
@@ -300,14 +282,14 @@ if ( ! class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ) ) {
 			if ( empty( $rows ) ) {
 				$rows = 7;
 			}
-			echo sprintf(
+			printf(
 				'<textarea name="%s" id="%s" rows="%s" class="%s">%s</textarea><p class="description">%s</p>',
-				$field,
-				$field,
-				$rows,
-				$class,
-				$value,
-				$description
+				esc_attr( $field ),
+				esc_attr( $field ),
+				(int) $rows,
+				sanitize_html_class( $class ),
+				esc_textarea( $value ),
+				esc_html( $description )
 			);
 		} // END public function settings_field_textarea($args)
 
@@ -317,13 +299,17 @@ if ( ! class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ) ) {
 		 */
 		public function settings_field_select($args) {
 			extract( $args );
-			$html = sprintf( '<select id="%s" name="%s">', $field, $field );
+			printf( '<select id="%s" name="%s">', esc_attr( $field ), esc_attr( $field ) );
 			foreach ( $items as $key => $val ) {
-				$selected = ( $value == $key ) ? 'selected="selected"' : '';
-				$html .= sprintf( '<option %s value="%s">%s</option>', $selected, $key, $val );
+				$selected = ( $value == $key ) ? 'selected=selected' : '';
+				printf(
+					'<option %s value="%s">%s</option>',
+					esc_attr( $selected ),
+					sanitize_key( $key ),
+					sanitize_text_field( $val )
+				);
 			}
-			$html .= sprintf( '</select><p class="description">%s</p>', $description );
-			echo $html;
+			printf( '</select><p class="description">%s</p>', esc_html( $description ) );
 		} // END public function settings_field_select($args)
 
 		/**
@@ -332,14 +318,13 @@ if ( ! class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ) ) {
 		 */
 		public function settings_field_colour_picker($args) {
 			extract( $args );
-			$html = sprintf(
-				'<input type="text" name="%s" id="%s" value="%s" class="wpau-color-field" />',
-				$field,
-				$field,
-				$value
+			printf(
+				'<input type="text" name="%s" id="%s" value="%s" class="wpau-color-field" /> <p class="description">%s</p>',
+				esc_attr( $field ),
+				esc_attr( $field ),
+				esc_attr( $value ),
+				esc_html( $description )
 			);
-			$html .= ( ! empty( $description ) ) ? " <p class=\"description\">{$description}</p>" : '';
-			echo $html;
 		} // END public function settings_field_colour_picker($args)
 
 		/**
@@ -403,5 +388,6 @@ if ( ! class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ) ) {
 			// Render the settings template.
 			include( sprintf( '%s/../templates/settings.php', dirname( __FILE__ ) ) );
 		} // END public function plugin_settings_page()
+
 	} // END class WPAU_STOCK_TICKER_SETTINGS
 } // END if(!class_exists( 'WPAU_STOCK_TICKER_SETTINGS' ))
